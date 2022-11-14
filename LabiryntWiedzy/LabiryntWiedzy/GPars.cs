@@ -7,22 +7,12 @@ namespace LabiryntWiedzy
 {
     class GPars
     {
-        //public static long GAME_TIME = long.MaxValue; //Dopuszczalny czas gry
-        //public readonly static long NO_LEVELS = 5; //Liczba poziomów gry
         public static Image bgImage; //Obraz tła
         public static Image menuImage; //Obraz ikony Menu
         //public static Image menuGameImage; //Obraz ikony Menu powrotu do gry
         //public static Image logoImage; // Obraz ikony logo
         public static Image[] blocks; //Tablica obiektów pierwszego planu
-        //public static Boolean pause = false; //Zmienna stanu określającam czy jest przerwa w grze
-        //public static Boolean levelPause = false; //Zmienna stanu określająca czy wybrano menu
-        //public static long startTime; //Zmienna pomocnicza określająca początkowy czas gry
-        //public static double levelTime; //Zmienna pomocnicza określająca czas ukończenia aktualnego poziomu
-        //public static int MoveMODE = 1; //Zmienna pomocnicza określająca aktualny poziom gry
-        //public static Boolean end = false; //Zmienna pomocnicza określająca status ukończenia gry
-        //public static int noOfObjects = 10; //Zmienna pomocnicza określająca maksymalną liczę obiektów pierwszego planu
-        //public static int gWidth = 1024; //Szerokość pola graficznego gry
-        //public static int gHeight = 768; //Wysokość pola graficznego gry
+        
 
 
         public static void loadInitialImages()

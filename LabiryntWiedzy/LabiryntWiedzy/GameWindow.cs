@@ -24,16 +24,7 @@ namespace LabiryntWiedzy
         private void initGUI(int width, int height)
         {
             GPars.loadInitialImages();
-
-            Button a = new Button(); // ROBOCZO przycisk do zamykania okna
-            a.Size = new System.Drawing.Size(200, 50);
-            a.BackColor = System.Drawing.Color.Pink;
-            a.Location = new System.Drawing.Point(400, 0);
-            a.Text = "Zamknij okno";
-            a.Click += new System.EventHandler(this.buttonPressed);
-
-            Controls.Add(a);
-
+            this.Cursor = new Cursor("images/default.ico"); // ustawienie inne wygladu kursora myszki
             Controls.Add(new GamePanel(width, height)); // dodanie panelu gry zawierający grafikę i akcję
 
         }//koniec initGUI()

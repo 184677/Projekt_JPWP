@@ -19,10 +19,9 @@ namespace LabiryntWiedzy
         public Image icon; //Ikona obiektu
 
         /**
-         * Konstruktor - ustawienie parametrów obiektu, wylosowanie koloru balonu
+         * Konstruktor - ustawienie parametrów obiektu, 
          * @param x początkowa współrzędna x
          * @param y początkowa współrzędna y
-         * @param images tablica ikon z balonami
         */
 
        public Block(int x, int y, Image [] images)
