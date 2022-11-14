@@ -15,7 +15,6 @@ namespace LabiryntWiedzy
             Size = new System.Drawing.Size(width, height); // ustawienie wymiarow okna
             StartPosition = FormStartPosition.CenterScreen;  // ustawienie pozycji poczatkowej na srodek
             FormBorderStyle = FormBorderStyle.FixedSingle; // zablokowanie mozliwosci zmiany rozmiaru okna
-            BackColor = System.Drawing.Color.Aquamarine;  // ROBOCZO ustawienie koloru tła 
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None; // ukrycie ramki okna i przyciskow
             initGUI(width, height);
             Application.Run(this);  // wyswietlenie okna

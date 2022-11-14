@@ -10,7 +10,7 @@ namespace LabiryntWiedzy
         //public static long GAME_TIME = long.MaxValue; //Dopuszczalny czas gry
         //public readonly static long NO_LEVELS = 5; //Liczba poziomów gry
         public static Image bgImage; //Obraz tła
-        //public static Image menuImage; //Obraz ikony Menu
+        public static Image menuImage; //Obraz ikony Menu
         //public static Image menuGameImage; //Obraz ikony Menu powrotu do gry
         //public static Image logoImage; // Obraz ikony logo
         public static Image[] blocks; //Tablica obiektów pierwszego planu
@@ -32,7 +32,7 @@ namespace LabiryntWiedzy
              */
 
             bgImage= Image.FromFile("images/bg_1024.jpg");
-            //menuImage= Image.FromFile("images/menu_1024.jpg");
+            menuImage= Image.FromFile("images/menu_1024.png");
             //menuGameImage = Image.FromFile("images/gra_1024.png");
             //logoImage = Image.FromFile("images/logo.png");
             
