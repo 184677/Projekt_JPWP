@@ -17,7 +17,8 @@ namespace LabiryntWiedzy
         public FontFamily fontFamily; //
         public Font menuFont; //Czcionki stosowane w pasku Menu
         public Font alertFont; //Czcionki stosowane jako alert w polu gry
-       
+
+        private Point MouseDownLocation;
 
         public GamePanel(int width, int height)
         {
@@ -32,13 +33,12 @@ namespace LabiryntWiedzy
             fontFamily = new FontFamily("Haettenschweiler");
             menuFont = new Font(fontFamily, 52, FontStyle.Regular, GraphicsUnit.Pixel);
             alertFont = new Font(fontFamily, 32, FontStyle.Regular, GraphicsUnit.Pixel);
-            
-            Paint += new System.Windows.Forms.PaintEventHandler(Draw); // rysowanie tla
-            MouseClick += new System.Windows.Forms.MouseEventHandler(MouseClicked); // obsluga klikniecia myszka
 
         } // koniec GamePanel()
 
-        private void Draw(object sender, PaintEventArgs e)
+
+
+        protected override void OnPaint( PaintEventArgs e)
         {
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -59,16 +59,20 @@ namespace LabiryntWiedzy
                 g.DrawRectangle(Pens.Crimson, barMenu); // narysowanie obwodki paska menu
                 g.FillRectangle(Brushes.WhiteSmoke, barMenu); // wypelnienie paska menu
                 g.DrawString("Menu", menuFont, Brushes.Black, new Point(0, 0));
+
+                klocek.currX = klocek.rec.Left;
+                klocek.currY = klocek.rec.Top;
+                //g.FillRectangle(Brushes.DeepSkyBlue, klocek.rec);
+                g.DrawImage(klocek.icon, klocek.currX, klocek.currY);
             }
 
         }
 
-        private void MouseClicked(object sender, MouseEventArgs e)
+        protected override void OnMouseDown( MouseEventArgs e)
         {
-            Console.WriteLine(e.X);
-            Console.WriteLine(e.Y);
+            MouseDownLocation = e.Location;
 
-            if (GPars.gameStatus == 0)
+            if (GPars.gameStatus == 0 && e.Button== MouseButtons.Left)
             {
                 //Czy wybrano opcję nowa gra w startowym menu
                 if (e.X > 439 && e.X < 592 && e.Y > 246 && e.Y < 281)
@@ -88,7 +92,7 @@ namespace LabiryntWiedzy
                     Application.Exit();
                 }
             }
-            else if (GPars.gameStatus == 1)
+            else if (GPars.gameStatus == 1 && e.Button == MouseButtons.Left)
             {
                 if (e.X > 19 && e.X < 102 && e.Y > 23 && e.Y < 58)
                 {
@@ -98,6 +102,32 @@ namespace LabiryntWiedzy
 
             }
 
+        }
+
+
+        Block klocek = new Block(100, 100, 50, 100, GPars.blocks[1]);
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (MouseDownLocation.X > klocek.rec.Left && MouseDownLocation.X < (klocek.rec.Left + klocek.width) && MouseDownLocation.Y > klocek.rec.Top && MouseDownLocation.Y < (klocek.rec.Top + klocek.height))
+                {
+                    klocek.rec.Location = new Point((e.X - MouseDownLocation.X) + klocek.rec.Left, klocek.rec.Top);
+                    MouseDownLocation = e.Location;
+                    Invalidate();
+                }
+            }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                if (MouseDownLocation.X > klocek.rec.Left && MouseDownLocation.X < (klocek.rec.Left + klocek.width) && MouseDownLocation.Y > klocek.rec.Top && MouseDownLocation.Y < (klocek.rec.Top + klocek.height))
+                {
+                    klocek.rec.Location = new Point(klocek.rec.Left, (e.Y - MouseDownLocation.Y) + klocek.rec.Top);
+                    MouseDownLocation = e.Location;
+                    Invalidate();
+                }
+            }
         }
 
 
