@@ -12,7 +12,7 @@ namespace LabiryntWiedzy
         //public static Image menuGameImage; //Obraz ikony Menu powrotu do gry
         //public static Image logoImage; // Obraz ikony logo
         public static Image[] blocks; //Tablica obiektów pierwszego planu
-        
+        public static int gameStatus = 0; //Zmienna stanu określająca stan gry 0-startowe menu, 1-rozpoczecie rozgrywki  
 
 
         public static void loadInitialImages()
