@@ -11,7 +11,8 @@ namespace LabiryntWiedzy
         public static Image menuImage; //Obraz ikony Menu
         //public static Image menuGameImage; //Obraz ikony Menu powrotu do gry
         //public static Image logoImage; // Obraz ikony logo
-        public static Image[] blocks; //Tablica obiektów pierwszego planu
+        public static Image[] blocks; //Tablica grafik obiektów pierwszego planu
+        public static int noOfObjects = 10; //Zmienna pomocnicza określająca maksymalną liczę obiektów pierwszego planu
         public static int gameStatus = 0; //Zmienna stanu określająca stan gry 0-startowe menu, 1-rozpoczecie rozgrywki  
 
 
@@ -28,10 +29,10 @@ namespace LabiryntWiedzy
             
 
 
-            blocks = new Image[2];
+            blocks = new Image[3];
             blocks[0] = Image.FromFile("images/block_runner.jpg");
             blocks[1] = Image.FromFile("images/block_obstacle1.jpg");
-            //blocks[2] = Image.FromFile("images/block_obstacle_2.png");
+            blocks[2] = Image.FromFile("images/block_obstacle2.jpg");
             //blocks[3] = Image.FromFile("images/block_obstacle_3.png");
             //blocks[4] = Image.FromFile("images/block_obstacle_4.png");
             //blocks[5] = Image.FromFile("images/block_obstacle_5.png");

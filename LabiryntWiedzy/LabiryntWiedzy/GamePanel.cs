@@ -17,7 +17,7 @@ namespace LabiryntWiedzy
         public FontFamily fontFamily; //
         public Font menuFont; //Czcionki stosowane w pasku Menu
         public Font alertFont; //Czcionki stosowane jako alert w polu gry
-
+        private Block[] blocks; // tablica obiektów pierwszego planu - klocki
         private Point MouseDownLocation;
 
         public GamePanel(int width, int height)
@@ -29,10 +29,13 @@ namespace LabiryntWiedzy
             Size = new System.Drawing.Size(sWidth, sHeight);
             Location = new System.Drawing.Point(0, 0);
 
-
             fontFamily = new FontFamily("Haettenschweiler");
             menuFont = new Font(fontFamily, 52, FontStyle.Regular, GraphicsUnit.Pixel);
             alertFont = new Font(fontFamily, 32, FontStyle.Regular, GraphicsUnit.Pixel);
+
+            blocks = new Block[GPars.noOfObjects];
+
+            restartGame();
 
         } // koniec GamePanel()
 
@@ -60,10 +63,9 @@ namespace LabiryntWiedzy
                 g.FillRectangle(Brushes.WhiteSmoke, barMenu); // wypelnienie paska menu
                 g.DrawString("Menu", menuFont, Brushes.Black, new Point(0, 0));
 
-                klocek.currX = klocek.rec.Left;
-                klocek.currY = klocek.rec.Top;
-                //g.FillRectangle(Brushes.DeepSkyBlue, klocek.rec);
-                g.DrawImage(klocek.icon, klocek.currX, klocek.currY);
+                g.DrawImage(blocks[0].icon, blocks[0].rec.Left, blocks[0].rec.Top);
+                g.DrawImage(blocks[1].icon, blocks[1].rec.Left, blocks[1].rec.Top);
+                g.DrawImage(blocks[2].icon, blocks[2].rec.Left, blocks[2].rec.Top);
             }
 
         }
@@ -105,32 +107,120 @@ namespace LabiryntWiedzy
         }
 
 
-        Block klocek = new Block(100, 100, 50, 100, GPars.blocks[1]);
-
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            Boolean kolizja;
+            for (int i=0; i<3 ;i++)
             {
-                if (MouseDownLocation.X > klocek.rec.Left && MouseDownLocation.X < (klocek.rec.Left + klocek.width) && MouseDownLocation.Y > klocek.rec.Top && MouseDownLocation.Y < (klocek.rec.Top + klocek.height))
+                if (e.Button == MouseButtons.Left) // poruszanie klockiem w poziomie
                 {
-                    klocek.rec.Location = new Point((e.X - MouseDownLocation.X) + klocek.rec.Left, klocek.rec.Top);
-                    MouseDownLocation = e.Location;
-                    Invalidate();
-                }
-            }
+                    kolizja = false;
+                    if (MouseDownLocation.X > blocks[i].rec.Left && MouseDownLocation.X < (blocks[i].rec.Left + blocks[i].width) && MouseDownLocation.Y > blocks[i].rec.Top && MouseDownLocation.Y < (blocks[i].rec.Top + blocks[i].height))
+                    {
+                        for (int j = 0; j < 3; j++) // sprawdzenie kolizji
+                        {
+                            if (i == j) continue;
+                            CheckCollisions(blocks[i].rec, blocks[j].rec);
+                        }
 
-            if (e.Button == MouseButtons.Right)
-            {
-                if (MouseDownLocation.X > klocek.rec.Left && MouseDownLocation.X < (klocek.rec.Left + klocek.width) && MouseDownLocation.Y > klocek.rec.Top && MouseDownLocation.Y < (klocek.rec.Top + klocek.height))
+                        if (blocks[i].type == 3 || blocks[i].type == 2 && kolizja == false)
+                        {
+                            blocks[i].rec.Location = new Point((e.X - MouseDownLocation.X) + blocks[i].rec.Left, blocks[i].rec.Top);
+                            MouseDownLocation = e.Location;
+                            Invalidate();
+                        }
+                    }
+                }
+                else if (e.Button == MouseButtons.Right) // poruszanie klockiem w pionie
                 {
-                    klocek.rec.Location = new Point(klocek.rec.Left, (e.Y - MouseDownLocation.Y) + klocek.rec.Top);
-                    MouseDownLocation = e.Location;
-                    Invalidate();
+                    kolizja = false;
+                    if (MouseDownLocation.X > blocks[i].rec.Left && MouseDownLocation.X < (blocks[i].rec.Left + blocks[i].width) && MouseDownLocation.Y > blocks[i].rec.Top && MouseDownLocation.Y < (blocks[i].rec.Top + blocks[i].height))
+                    {
+                        for (int j = 0; j < 3; j++) // sprawdzenie kolizji
+                        {
+                            if (i == j) continue;
+                            CheckCollisions(blocks[i].rec, blocks[j].rec);
+                        }
+
+                        if (blocks[i].type == 3 || blocks[i].type == 1)
+                        {
+                            blocks[i].rec.Location = new Point(blocks[i].rec.Left, (e.Y - MouseDownLocation.Y) + blocks[i].rec.Top);
+                            MouseDownLocation = e.Location;
+                            Invalidate();
+                        }
+                    }
                 }
             }
         }
 
 
+
+        public void CheckCollisions(Rectangle rect1, Rectangle rect2)
+        {
+            if (rect1.IntersectsWith(rect2) == false) return;
+
+            bool touching_right =
+            rect1.Right > rect2.Left &&
+            rect1.Left < rect2.Left &&
+            rect1.Bottom > rect2.Top &&
+            rect1.Top < rect2.Bottom;
+
+            bool touching_left =
+            rect1.Left < rect2.Right &&
+            rect1.Right > rect2.Right &&
+            rect1.Bottom > rect2.Top &&
+            rect1.Top < rect2.Bottom;
+
+            bool touching_bottom =
+            rect1.Bottom > rect2.Top &&
+            rect1.Top < rect2.Top &&
+            rect1.Right > rect2.Left &&
+            rect1.Left < rect2.Right;
+
+            bool touching_top =
+            rect1.Top < rect2.Bottom &&
+            rect1.Bottom > rect2.Bottom &&
+            rect1.Right > rect2.Left &&
+            rect1.Left < rect2.Right;
+
+            if (touching_left && !touching_right && !touching_bottom && !touching_top) Console.WriteLine("Collision LEFT side");
+            if (!touching_left && touching_right && !touching_bottom && !touching_top) Console.WriteLine("Collision RIGHT side");
+            if (!touching_left && !touching_right && !touching_bottom && touching_top) Console.WriteLine("Collision TOP side");
+            if (!touching_left && !touching_right && touching_bottom && !touching_top) Console.WriteLine("Collsion BOTTOM side");
+            if (!touching_left && touching_right && touching_bottom && !touching_top)
+            {
+               // Console.WriteLine("Collision right bottom corner");
+                if (rect1.Right - rect2.Left > rect1.Bottom - rect2.Top) Console.WriteLine("Touching BOTTOM on corner");
+                else Console.WriteLine("Collision RIGHT on corner");
+            }
+            if (!touching_left && touching_right && !touching_bottom && touching_top)
+            {
+               // Console.WriteLine("Collision right top corner");
+                if (rect1.Right - rect2.Left > rect2.Bottom - rect1.Top) Console.WriteLine("Touching TOP on corner");
+                else Console.WriteLine("Collision RIGHT on corner");
+            }
+            if (touching_left && !touching_right && touching_bottom && !touching_top)
+            {
+               // Console.WriteLine("Collision left bottom corner");
+                if (rect2.Right - rect1.Left > rect1.Bottom - rect2.Top) Console.WriteLine("Touching BOTTOM on corner");
+                else Console.WriteLine("Collison LEFT on corner");
+            }
+            if (touching_left && !touching_right && !touching_bottom && touching_top)
+            {
+               // Console.WriteLine("Collision left top corner");
+                if (rect2.Right - rect1.Left > rect2.Bottom - rect1.Top) Console.WriteLine("Touching TOP on corner");
+                else Console.WriteLine("Collision LEFT on corner");
+            }
+        }
+
+
+
+        private void restartGame() // zastanowic sie czy nie lepiej od razu zdefiniowac wszytskie klocki i potem rysowac tylko te ktore chcemy
+        {
+            blocks[0]= new Block(100, 100, 50, 50, 3, GPars.blocks[0]);
+            blocks[1]= new Block(200, 200, 50, 100, 1, GPars.blocks[1]);
+            blocks[2] = new Block(400, 400, 100, 50, 2, GPars.blocks[2]);
+        }//koniec restartGame()
 
     }
 }
