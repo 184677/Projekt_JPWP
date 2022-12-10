@@ -24,16 +24,10 @@ namespace LabiryntWiedzy
         private void initGUI(int width, int height)
         {
             GPars.loadInitialImages();
-            this.Cursor = new Cursor("images/default.ico"); // ustawienie inne wygladu kursora myszki
+            //this.Cursor = new Cursor("images/default.ico"); // ustawienie inne wygladu kursora myszki
             Controls.Add(new GamePanel(width, height)); // dodanie panelu gry zawierający grafikę i akcję
 
         }//koniec initGUI()
-
-        private void buttonPressed(object sender, System.EventArgs e)
-        {
-           this.Close();
-        }
-
 
     }
 }
