@@ -49,6 +49,11 @@ namespace LabiryntWiedzy
 
         protected override void OnPaint( PaintEventArgs e)
         {
+            Pen Whitepen = new Pen(Brushes.White);
+            Whitepen.Width = 4.0F;
+            Pen Redpen = new Pen(Brushes.Red);
+            Redpen.Width = 4.0F;
+
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.DrawImage(GPars.bgImage, new Point(0, 0));
@@ -56,7 +61,7 @@ namespace LabiryntWiedzy
             {
                 Rectangle startMenuRec = new Rectangle((sWidth-400)/2, (sHeight-400)/2, 400, 400); // prostokat reprezentujacy startowe menu
                 GraphicsPath startMenu = Block.RoundedRect(startMenuRec, 10); // Menu poczatkowe z zaokraglonymi rogami
-                g.DrawPath(Pens.White, startMenu); // narysowanie obwodki
+                g.DrawPath(Whitepen, startMenu); // narysowanie obwodki
                 g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), startMenu); // wypelnienie
                 g.DrawString("Nowa gra", menuFont, Brushes.White, new Point(420, 225));
                 g.DrawString("Wybierz poziom", menuFont, Brushes.White, new Point(375, 305));
@@ -65,8 +70,6 @@ namespace LabiryntWiedzy
             }
             else if (GPars.pause == false) 
             {
-                Pen Whitepen = new Pen(Brushes.White);
-                Whitepen.Width = 4.0F;
 
                 Rectangle barMenuRec = new Rectangle(35, 20, sWidth - 70 -1, barHeight); // prostokat reprezentujacy pasek menu
                 GraphicsPath barMenu = Block.RoundedRect(barMenuRec, 10); // pasek menu z zaokraglonymi rogami
@@ -96,15 +99,12 @@ namespace LabiryntWiedzy
                 g.DrawString("1) negatywny", questionFont, Brushes.White, new Point(750, 280));
                 g.DrawString("2) neutralny", questionFont, Brushes.White, new Point(750, 320));
 
-                Whitepen.Dispose();
 
                 g.DrawImage(GPars.ans1Image, new Point(labirynthRec.Left-80, labirynthRec.Bottom - 160)); // narysowanie wyjscia nr1
                 g.DrawImage(GPars.ans2Image, new Point(labirynthRec.Right+7 , labirynthRec.Top +85 )); // narysowanie wyjscia nr2
-                Pen Redpen = new Pen(Brushes.Red);
-                Redpen.Width = 4.0F;
-                g.DrawLine(Redpen, new Point(labirynthRec.Right, labirynthRec.Top + 85), new Point(labirynthRec.Right, labirynthRec.Top + 160)); //linia wyjscia nr1
-                g.DrawLine(Redpen, new Point(labirynthRec.Left, labirynthRec.Bottom - 160), new Point(labirynthRec.Left, labirynthRec.Bottom - 85)); // linia wyjscia nr2
-                Redpen.Dispose();
+        
+                g.DrawLine(Redpen, new Point(labirynthRec.Right, labirynthRec.Top + 75), new Point(labirynthRec.Right, labirynthRec.Top + 170)); //linia wyjscia nr1
+                g.DrawLine(Redpen, new Point(labirynthRec.Left, labirynthRec.Bottom - 170), new Point(labirynthRec.Left, labirynthRec.Bottom - 75)); // linia wyjscia nr2
 
                 g.DrawImage(blocks[0].icon, blocks[0].rec.Left, blocks[0].rec.Top);
                 g.DrawImage(blocks[1].icon, blocks[1].rec.Left, blocks[1].rec.Top);
@@ -115,7 +115,8 @@ namespace LabiryntWiedzy
                 g.DrawImage(blocks[6].icon, blocks[6].rec.Left, blocks[6].rec.Top);
                 g.DrawImage(blocks[7].icon, blocks[7].rec.Left, blocks[7].rec.Top);
             }
-
+            Whitepen.Dispose();
+            Redpen.Dispose();
         }
 
         protected override void OnMouseDown( MouseEventArgs e)

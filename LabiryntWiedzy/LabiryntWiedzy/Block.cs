@@ -36,9 +36,12 @@ namespace LabiryntWiedzy
             this.rec = new Rectangle(x, y, width, height);
         }
 
+
         public static Boolean MoveCheck(Rectangle rect, int i, int x_dif, int y_dif)
         {
-            bool flag = true;
+            bool flag_collision = true;
+            bool flag_border = true;
+
             int temp_h = 0;
             int temp_w = 0;
             int temp_x = 0;
@@ -74,16 +77,22 @@ namespace LabiryntWiedzy
 
             Rectangle temp_rec = new Rectangle(temp_x, temp_y, temp_w, temp_h);
 
-            for (int j = 0; j < GPars.noOfObjectsInPanel; j++) // sprawdzenie kolizji
+            for (int j = 0; j < GPars.noOfObjectsInPanel; j++) // sprawdzenie kolizji miedzy klockami
             {
                 if (i == j) continue;
                 if (temp_rec.IntersectsWith(GamePanel.blocks[j].rec))
                 {
-                    flag = false;
+                    flag_collision = false;
                     break;
                 }
             }
-            return flag;
+
+            if (temp_rec.Left > 119 && temp_rec.Right < (415 + 121) && temp_rec.Top > 214 && temp_rec.Bottom < (216 + 415)) flag_border = true;
+            else if (GamePanel.blocks[i].type == 3 && temp_rec.Top > (215 + 75) && temp_rec.Bottom < (215 + 170) && temp_rec.Left > (120 + 225)) flag_border = true;
+            else if (GamePanel.blocks[i].type == 3 && temp_rec.Bottom < (215 + 415 - 75) && temp_rec.Top > (215 + 415 - 170) && temp_rec.Left < (120 + 225)) flag_border = true;
+            else flag_border = false;
+
+            return flag_collision && flag_border;
         }
 
 
