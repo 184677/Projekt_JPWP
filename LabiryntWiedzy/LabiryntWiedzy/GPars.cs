@@ -16,8 +16,8 @@ namespace LabiryntWiedzy
         public static Boolean pause = false; //Zmienna stanu określającam czy jest przerwa w grze
         public static Boolean levelPause = false; // Zmienna stanu określająca czy wybrano menu
         public static Boolean end = false;
-        public static long startTime;
-        public static double levelTime;
+        //public static long startTime;
+        //public static double levelTime;
         public static int noOfObjects = 10; //Zmienna pomocnicza określająca maksymalną liczę obiektów pierwszego planu
         public static int noOfObjectsInPanel = 8;
        

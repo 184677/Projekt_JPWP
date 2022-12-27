@@ -6,7 +6,7 @@ using System.Drawing.Drawing2D;
 
 namespace LabiryntWiedzy
 {
-    public class Block 
+    public class Block
     {
         public int x; //Poczatkowa wspolrzedna x obiektu
         public int y; //Poczatkowa wspolrzedna y obiektu
@@ -26,7 +26,7 @@ namespace LabiryntWiedzy
         */
 
         public Block(int x, int y, int width, int height, int type, Image icon)
-       {
+        {
             this.x = x;
             this.y = y;
             this.width = width;
@@ -36,57 +36,56 @@ namespace LabiryntWiedzy
             this.rec = new Rectangle(x, y, width, height);
         }
 
-        public static void CheckCollisions(ref Rectangle rect1, ref Rectangle rect2)
+        public static Boolean MoveCheck(Rectangle rect, int i, int x_dif, int y_dif)
         {
-            bool touching_right =
-            rect1.Right >= rect2.Left &&
-            rect1.Left < rect2.Left &&
-            rect1.Bottom > rect2.Top &&
-            rect1.Top < rect2.Bottom;
-
-            bool touching_left =
-            rect1.Left <= rect2.Right &&
-            rect1.Right > rect2.Right &&
-            rect1.Bottom > rect2.Top &&
-            rect1.Top < rect2.Bottom;
-
-            bool touching_bottom =
-            rect1.Bottom >= rect2.Top &&
-            rect1.Top < rect2.Top &&
-            rect1.Right > rect2.Left &&
-            rect1.Left < rect2.Right;
-
-            bool touching_top =
-            rect1.Top <= rect2.Bottom &&
-            rect1.Bottom > rect2.Bottom &&
-            rect1.Right > rect2.Left &&
-            rect1.Left < rect2.Right;
-
-            if (touching_left && !touching_right && !touching_bottom && !touching_top) rect1.Location = new Point(rect1.Left + 1, rect1.Top); // Collision LEFT side
-            else if (!touching_left && touching_right && !touching_bottom && !touching_top) rect1.Location = new Point(rect1.Left - 1, rect1.Top); //Collision RIGHT
-            else if (!touching_left && !touching_right && !touching_bottom && touching_top) rect1.Location = new Point(rect1.Left, rect1.Top + 1); //Collision TOP side
-            else if (!touching_left && !touching_right && touching_bottom && !touching_top) rect1.Location = new Point(rect1.Left, rect1.Top - 1); //Collsion BOTTOM side
-            else if (!touching_left && touching_right && touching_bottom && !touching_top) // Collision right bottom corner
+            bool flag = true;
+            int temp_h = 0;
+            int temp_w = 0;
+            int temp_x = 0;
+            int temp_y = 0;
+            if (x_dif > 0)
             {
-                if (rect1.Right - rect2.Left > rect1.Bottom - rect2.Top) rect1.Location = new Point(rect1.Left, rect1.Top - 1); //ouching BOTTOM on corner
-                else rect1.Location = new Point(rect1.Left - 1, rect1.Top); //Collision RIGHT on corner
+                temp_x = rect.X;
+                temp_y = rect.Y;
+                temp_w = rect.Width + x_dif;
+                temp_h = rect.Height;
             }
-            else if (!touching_left && touching_right && !touching_bottom && touching_top) //Collision right top corner
+            else if (x_dif < 0)
             {
-                if (rect1.Right - rect2.Left > rect2.Bottom - rect1.Top) rect1.Location = new Point(rect1.Left, rect1.Top + 1); // Touching TOP on corner
-                else rect1.Location = new Point(rect1.Left - 1, rect1.Top); //Collision RIGHT on corner
+                temp_x = rect.X + x_dif;
+                temp_y = rect.Y;
+                temp_w = rect.Width + Math.Abs(x_dif);
+                temp_h = rect.Height;
             }
-            else if (touching_left && !touching_right && touching_bottom && !touching_top) // Collision left bottom corner
+            else if (y_dif > 0)
             {
-                if (rect2.Right - rect1.Left > rect1.Bottom - rect2.Top) rect1.Location = new Point(rect1.Left, rect1.Top - 1); //Touching BOTTOM on corner
-                else rect1.Location = new Point(rect1.Left + 1, rect1.Top); //Collison LEFT on corner
+                temp_x = rect.X;
+                temp_y = rect.Y;
+                temp_w = rect.Width;
+                temp_h = rect.Height + y_dif;
             }
-            else if (touching_left && !touching_right && !touching_bottom && touching_top) // Collision left top corner
+            else if (y_dif < 0)
             {
-                if (rect2.Right - rect1.Left > rect2.Bottom - rect1.Top) rect1.Location = new Point(rect1.Left, rect1.Top + 1); //Touching TOP on corner
-                else rect1.Location = new Point(rect1.Left + 1, rect1.Top); //Collision LEFT on corner
+                temp_x = rect.X;
+                temp_y = rect.Y + y_dif;
+                temp_w = rect.Width;
+                temp_h = rect.Height + Math.Abs(y_dif);
             }
-        } // CheckCollsions()
+
+            Rectangle temp_rec = new Rectangle(temp_x, temp_y, temp_w, temp_h);
+
+            for (int j = 0; j < GPars.noOfObjectsInPanel; j++) // sprawdzenie kolizji
+            {
+                if (i == j) continue;
+                if (temp_rec.IntersectsWith(GamePanel.blocks[j].rec))
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            return flag;
+        }
+
 
         public static GraphicsPath RoundedRect(Rectangle bounds, int radius)
         {

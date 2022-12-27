@@ -18,7 +18,7 @@ namespace LabiryntWiedzy
         public FontFamily fontFamily; //
         public Font menuFont; //Czcionki stosowane w pasku Menu
         public Font questionFont; //Czcionki stosowane do wypisania pytan
-        private Block[] blocks; // tablica obiektów pierwszego planu - klocki
+        public static Block[] blocks; // tablica obiektów pierwszego planu - klocki
         private Point MouseDownLocation;
 
         public GamePanel(int width, int height)
@@ -36,7 +36,7 @@ namespace LabiryntWiedzy
             fontFamily = new FontFamily("Haettenschweiler");
             menuFont = new Font(fontFamily, 52, FontStyle.Regular, GraphicsUnit.Pixel);
             questionFont = new Font(fontFamily, 32, FontStyle.Regular, GraphicsUnit.Pixel);
-            //SoundPlayer sp = new SoundPlayer();
+            SoundPlayer sp = new SoundPlayer();
             //sp.SoundLocation = "music/bg_music.wav";
             //sp.PlayLooping();
 
@@ -121,7 +121,7 @@ namespace LabiryntWiedzy
         protected override void OnMouseDown( MouseEventArgs e)
         {
             MouseDownLocation = e.Location;
-            Console.WriteLine(e.Location);
+          
             if (GPars.pause == true && e.Button == MouseButtons.Left)
             {
                 //Czy wybrano opcję nowa gra w startowym menu
@@ -163,18 +163,14 @@ namespace LabiryntWiedzy
                 {
                     if (MouseDownLocation.X > blocks[i].rec.Left && MouseDownLocation.X < (blocks[i].rec.Left + blocks[i].width) && MouseDownLocation.Y > blocks[i].rec.Top && MouseDownLocation.Y < (blocks[i].rec.Top + blocks[i].height))
                     {
-                        
                         if (blocks[i].type == 3 || blocks[i].type == 2 )
                         {
-                            for (int j = 0; j < GPars.noOfObjectsInPanel; j++) // sprawdzenie kolizji
+                            if (Block.MoveCheck(blocks[i].rec, i, (e.X - MouseDownLocation.X), 0)) // sprawdzenie mozliwosci wykonania ruchu
                             {
-                                if (i == j) continue;
-                                Block.CheckCollisions(ref blocks[i].rec, ref blocks[j].rec);
+                                blocks[i].rec.Location = new Point((e.X - MouseDownLocation.X) + blocks[i].rec.Left, blocks[i].rec.Top);
+                                MouseDownLocation = e.Location;
+                                Invalidate();
                             }
-                            blocks[i].rec.Location = new Point((e.X - MouseDownLocation.X) + blocks[i].rec.Left, blocks[i].rec.Top);
-                            Console.WriteLine(e.Location);
-                            MouseDownLocation = e.Location;
-                            Invalidate();
                         }
                     }
                 }
@@ -185,15 +181,12 @@ namespace LabiryntWiedzy
 
                         if (blocks[i].type == 3 || blocks[i].type == 1)
                         {
-                            for (int j = 0; j < GPars.noOfObjectsInPanel; j++) // sprawdzenie kolizji
+                            if (Block.MoveCheck(blocks[i].rec, i, 0, (e.Y - MouseDownLocation.Y))) // sprawdzenie mozliwosci wykonania ruchu
                             {
-                                if (i == j) continue;
-                                Block.CheckCollisions(ref blocks[i].rec, ref blocks[j].rec);
+                                blocks[i].rec.Location = new Point(blocks[i].rec.Left, (e.Y - MouseDownLocation.Y) + blocks[i].rec.Top);
+                                MouseDownLocation = e.Location;                               
+                                Invalidate();
                             }
-                            
-                            blocks[i].rec.Location = new Point(blocks[i].rec.Left, (e.Y - MouseDownLocation.Y) + blocks[i].rec.Top);
-                            MouseDownLocation = e.Location;
-                            Invalidate();
                         }
                     }
                 }
