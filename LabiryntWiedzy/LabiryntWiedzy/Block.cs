@@ -37,6 +37,7 @@ namespace LabiryntWiedzy
         }
 
 
+
         public static Boolean MoveCheck(Rectangle rect, int i, int x_dif, int y_dif)
         {
             bool flag_collision = true;
@@ -77,7 +78,7 @@ namespace LabiryntWiedzy
 
             Rectangle temp_rec = new Rectangle(temp_x, temp_y, temp_w, temp_h);
 
-            for (int j = 0; j < GPars.noOfObjectsInPanel; j++) // sprawdzenie kolizji miedzy klockami
+            for (int j = 0; j < GPars.noOfObjects; j++) // sprawdzenie kolizji miedzy klockami
             {
                 if (i == j) continue;
                 if (temp_rec.IntersectsWith(GamePanel.blocks[j].rec))
