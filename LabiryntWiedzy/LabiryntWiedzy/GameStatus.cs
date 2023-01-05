@@ -9,7 +9,6 @@ namespace LabiryntWiedzy
         public int points; // Liczba punktow za poprawne odpowiedzi
         public int level; //Numer poziomu
         public double time; //Czas gry na danym poziomie
-        public Boolean gStarted; //Sprawdzenie czy rozpoczeto gre
         public int rightAns; //Prawidlowa odpowiedz w danym poziomie
 
         public void reset() // Zerowanie parametrow gry

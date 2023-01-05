@@ -19,11 +19,14 @@ namespace LabiryntWiedzy
         public Font menuFont; //Czcionki stosowane w pasku Menu
         public Font questionFont; //Czcionki stosowane do wypisania pytan
         public static Block[] blocks; // tablica obiektów pierwszego planu - klocki
+        public static Rectangle startMenuRec; // // prostokat reprezentujacy startowe menu
         public static Rectangle labirynthRec; // prostokat reprezentujacy labirynt
         public static Rectangle questionRec; // prostokat zawierajacy pytanie
         public static Rectangle barMenuRec; // prostokat reprezentujacy pasek menu
+        public static Rectangle shortMenuRec; // prostokat reprezentujacy skrocony pasek menu
         public static Rectangle exit1Rec; // prostokat reprezentujacy wyjscie nr1
         public static Rectangle exit2Rec; // prostokat reprezentujacy wyjscie nr2
+        public static Label questionLabel; // kontrolka label do wyswietlania pytania
         private Point MouseDownLocation;
 
         public GamePanel(int width, int height)
@@ -42,11 +45,22 @@ namespace LabiryntWiedzy
             menuFont = new Font(fontFamily, 52, FontStyle.Regular, GraphicsUnit.Pixel);
             questionFont = new Font(fontFamily, 32, FontStyle.Regular, GraphicsUnit.Pixel);
 
+            startMenuRec = new Rectangle((sWidth - 400) / 2, (sHeight - 400) / 2, 400, 400);
             labirynthRec = new Rectangle(120, 215, 415, 415);
             questionRec = new Rectangle(665, 165, 300, 250);
             barMenuRec = new Rectangle(35, 20, sWidth - 70 - 1, barHeight);
             exit1Rec = new Rectangle(labirynthRec.Left - 80, labirynthRec.Bottom - 160, 75, 75);
             exit2Rec = new Rectangle(labirynthRec.Right + 7, labirynthRec.Top + 85, 75, 75);
+            shortMenuRec = new Rectangle(805, 20, 185 - 1, barHeight);
+
+            questionLabel = new Label();
+            questionLabel.Size = new Size(questionRec.Width-20, questionRec.Height - 10);
+            questionLabel.Location = new Point(questionRec.Left + 10, questionRec.Top + 5);
+            questionLabel.BackColor = Color.FromArgb(0, 0, 0, 0);
+            questionLabel.Font = questionFont;
+            questionLabel.ForeColor = Color.White;
+            questionLabel.TextAlign = ContentAlignment.MiddleCenter;
+            this.Controls.Add(questionLabel);
 
             SoundPlayer sp = new SoundPlayer();
             //sp.SoundLocation = "music/bg_music.wav";
@@ -75,19 +89,62 @@ namespace LabiryntWiedzy
             else if (gStatus.level == 4) g.DrawImage(GPars.bgImages[3], new Point(0, 0));
             else g.DrawImage(GPars.bgImages[4], new Point(0, 0));
 
+            g.DrawImage(GPars.logoImage, 860, 680);// narysowanie loga
+
             if (GPars.pause)
             {
-                Rectangle startMenuRec = new Rectangle((sWidth-400)/2, (sHeight-400)/2, 400, 400); // prostokat reprezentujacy startowe menu
-                GraphicsPath startMenu = Block.RoundedRect(startMenuRec, 10); // Menu poczatkowe z zaokraglonymi rogami
-                g.DrawPath(Whitepen, startMenu); // narysowanie obwodki
-                g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), startMenu); // wypelnienie
-                g.DrawString("Wybierz poziom", menuFont, Brushes.White, new Point(375, 305));
-                g.DrawString("O grze...", menuFont, Brushes.White, new Point(440, 390));
-                g.DrawString("Wyjdź z gry", menuFont, Brushes.White, new Point(400, 475));
+                questionLabel.Visible = false;
 
-                if (gStatus.gStarted) g.DrawString("Kontynuuj grę" , menuFont, Brushes.White, new Point(390, 225));
-                else g.DrawString("Nowa gra", menuFont, Brushes.White, new Point(420, 225));
+                if (GPars.gMenu)
+                {
+                    GraphicsPath startMenu = Block.RoundedRect(startMenuRec, 10); // Menu poczatkowe z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, startMenu); // narysowanie obwodki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), startMenu); // wypelnienie
+                    g.DrawString("Wybierz poziom", menuFont, Brushes.White, new Point(375, 305));
+                    g.DrawString("O grze...", menuFont, Brushes.White, new Point(440, 390));
+                    g.DrawString("Wyjdź z gry", menuFont, Brushes.White, new Point(400, 475));
+                    questionLabel.Visible = false;
 
+                    if (GPars.gStarted) g.DrawString("Kontynuuj grę", menuFont, Brushes.White, new Point(390, 225));
+                    else g.DrawString("Nowa gra", menuFont, Brushes.White, new Point(420, 225));
+                }
+
+                else if (GPars.gLevelSel)
+                {
+                    GraphicsPath shortMenu = Block.RoundedRect(shortMenuRec, 10); // prostokat menu z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, shortMenu); // narysowanie obwodki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), shortMenu); // wypelnienie
+
+                    Rectangle lvlMenuRec1 = new Rectangle(250, 121, 525, 75);
+                    GraphicsPath lvlMenu1 = Block.RoundedRect(lvlMenuRec1, 10); // prostokat z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, lvlMenu1); // narysowanie obwodki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), lvlMenu1); // wypelnienie
+
+                    Rectangle lvlMenuRec2 = new Rectangle(250, 271 - 35, 525, 295);
+                    GraphicsPath lvlMenu2 = Block.RoundedRect(lvlMenuRec2, 10); // prostokat z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, lvlMenu2); // narysowanie obwodki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), lvlMenu2); // wypelnienie
+
+                    g.DrawString("Wybierz poziom:", menuFont, Brushes.White, new Point(250+120, 128));
+
+                    g.DrawImage(GPars.lvlImages[0], 325, 271);
+                    g.DrawImage(GPars.lvlImages[1], 325+150, 271);
+                    g.DrawImage(GPars.lvlImages[2], 325+300, 271);
+                    g.DrawImage(GPars.lvlImages[3], 325+75, 271+150);
+                    g.DrawImage(GPars.lvlImages[4], 325+225, 271+150);
+
+                    g.DrawImage(GPars.logoImage, 860, 680);// narysowanie loga
+                    g.DrawImage(GPars.menuImage, new Point(820, 20)); // narysowanie ikony menu
+                }
+                else if (GPars.gInformation)
+                {
+                    GraphicsPath shortMenu = Block.RoundedRect(shortMenuRec, 10); // prostokat menu z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, shortMenu); // narysowanie obwodki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), shortMenu); // wypelnienie
+
+                    g.DrawImage(GPars.logoImage, 860, 680);// narysowanie loga
+                    g.DrawImage(GPars.menuImage, new Point(820, 20)); // narysowanie ikony menu
+                }
             }
             else
             {
@@ -95,9 +152,9 @@ namespace LabiryntWiedzy
                 g.DrawPath(Whitepen, barMenu); // narysowanie obwodki
                 g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), barMenu); // wypelnienie
 
-                g.DrawImage(GPars.logoImage, 860, 680);// narysowanie loga
                 g.DrawImage(GPars.menuImage, new Point(820, 20)); // narysowanie ikony menu
 
+              
                 g.DrawString("POZIOM :", menuFont, Brushes.White, new Point(40, 23));
                 g.DrawString("" + gStatus.level, menuFont, Brushes.White, new Point(185, 23)); // wypisanie numeru aktualnego poziomu
                 g.DrawString("PUNKTY :", menuFont, Brushes.White, new Point(300, 23));
@@ -110,30 +167,25 @@ namespace LabiryntWiedzy
                 GraphicsPath question = Block.RoundedRect(questionRec, 10); // prostokat zawierajacy pytanie z zaokraglonymi rogami
                 g.DrawPath(Whitepen, question); // narysowanie obwodki 
                 g.FillPath(new SolidBrush(Color.FromArgb(100, 0, 0, 0)), question); // wypelnienie 
-               
-                g.DrawString("Pytanie nr 1", questionFont, Brushes.White, new Point(750, 170));
-                g.DrawString("Jaki ładunek ma neutron?", questionFont, Brushes.White, new Point(685, 210));
-                g.DrawString("1) negatywny", questionFont, Brushes.White, new Point(750, 280));
-                g.DrawString("2) neutralny", questionFont, Brushes.White, new Point(750, 320));
+
+                questionLabel.Visible = true;
 
                 g.DrawImage(GPars.ans1Image, exit1Rec.Left, exit1Rec.Top); // narysowanie wyjscia nr1
                 g.DrawImage(GPars.ans2Image, exit2Rec.Left, exit2Rec.Top); // narysowanie wyjscia nr2
-        
+
                 g.DrawLine(Redpen, new Point(labirynthRec.Right, labirynthRec.Top + 75), new Point(labirynthRec.Right, labirynthRec.Top + 170)); //linia wyjscia nr1
                 g.DrawLine(Redpen, new Point(labirynthRec.Left, labirynthRec.Bottom - 170), new Point(labirynthRec.Left, labirynthRec.Bottom - 75)); // linia wyjscia nr2
 
-                g.DrawImage(blocks[0].icon, blocks[0].rec.Left, blocks[0].rec.Top);
-                g.DrawImage(blocks[1].icon, blocks[1].rec.Left, blocks[1].rec.Top);
-                g.DrawImage(blocks[2].icon, blocks[2].rec.Left, blocks[2].rec.Top);
-                g.DrawImage(blocks[3].icon, blocks[3].rec.Left, blocks[3].rec.Top);
-                g.DrawImage(blocks[4].icon, blocks[4].rec.Left, blocks[4].rec.Top);
-                g.DrawImage(blocks[5].icon, blocks[5].rec.Left, blocks[5].rec.Top);
-                g.DrawImage(blocks[6].icon, blocks[6].rec.Left, blocks[6].rec.Top);
-                g.DrawImage(blocks[7].icon, blocks[7].rec.Left, blocks[7].rec.Top);
-                g.DrawImage(blocks[8].icon, blocks[8].rec.Left, blocks[8].rec.Top);
-                g.DrawImage(blocks[9].icon, blocks[9].rec.Left, blocks[9].rec.Top);
-                g.DrawImage(blocks[10].icon, blocks[10].rec.Left, blocks[10].rec.Top);
-                g.DrawImage(blocks[11].icon, blocks[11].rec.Left, blocks[11].rec.Top);
+                for (int i = 0; i < GPars.noOfObjects; i++) g.DrawImage(blocks[i].icon, blocks[i].rec.Left, blocks[i].rec.Top); // rysowanie klockow
+             
+                if (GPars.end)
+                {
+                    GraphicsPath endPanel = Block.RoundedRect(new Rectangle(questionRec.Left, questionRec.Bottom + 50, questionRec.Width, 57), 10); // pasek menu z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, endPanel); // narysowanie obwodki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), endPanel); // wypelnienie
+
+                    g.DrawString("KONIEC GRY!", menuFont, Brushes.Red, new Point(questionRec.Left+45, questionRec.Bottom + 50));
+                }
             }
             Whitepen.Dispose();
             Redpen.Dispose();
@@ -142,80 +194,140 @@ namespace LabiryntWiedzy
         protected override void OnMouseDown( MouseEventArgs e)
         {
             MouseDownLocation = e.Location;
-          
-            if (GPars.pause == true && e.Button == MouseButtons.Left)
+            //Console.WriteLine(e.Location);
+            if (e.Button == MouseButtons.Left)
             {
-                //Czy wybrano opcję nowa gra w startowym menu
-                if (e.X > 439 && e.X < 592 && e.Y > 246 && e.Y < 281)
+                if (GPars.pause && GPars.gMenu)
                 {
-                    if (!gStatus.gStarted) gStatus.gStarted = true;
-                    GPars.pause = false;
-                    Invalidate();
-                }
-                //Czy wybrano opcję o grze... w startowym menu
-                if (e.X > 457 && e.X < 587 && e.Y > 411 && e.Y < 455)
-                {
-                    gStatus.nextLevel();
-                    initLevel();
-                    Invalidate();
-                }
-                //Czy wybrano wyjdz z gry w startowym menu
-                if (e.X > 400 && e.X < 615 && e.Y < 542 && e.Y > 500)
-                {
-                    Application.Exit();
-                }
-            }
-            else if (GPars.pause == false && e.Button == MouseButtons.Left)
-            {
-                if (e.X > 850 && e.X < 1000 && e.Y > 30 && e.Y < 80)
-                {
-                    GPars.pause = true;
-                    Invalidate();
+                    //Czy wybrano opcję nowa gra w startowym menu
+                    if (e.X > 395 && e.X < 630 && e.Y > 225 && e.Y < 285)
+                    {
+                        if (!GPars.gStarted) GPars.gStarted = true;
+                        GPars.pause = false;
+                        Invalidate();
+                    }
+                    //Czy wybrano opcję wybor poziomu w startowym menu
+                    if (e.X > 375 && e.X < 650 && e.Y > 310 && e.Y < 365)
+                    {
+                        GPars.gMenu = false;
+                        GPars.gLevelSel = true;
+                        Invalidate();
+                    }
+                    //Czy wybrano opcję o grze... w startowym menu
+                    if (e.X > 440 && e.X < 590 && e.Y > 395 && e.Y < 450)
+                    {
+                        GPars.gMenu = false;
+                        GPars.gInformation = true;
+                        Invalidate();
+                    }
+                    //Czy wybrano wyjdz z gry w startowym menu
+                    if (e.X > 400 && e.X < 615 && e.Y < 535 && e.Y > 480)
+                    {
+                        Application.Exit();
+                    }
                 }
 
-            }
+                else if(GPars.pause && !GPars.gMenu && GPars.gLevelSel) // wybrana pozycja "wybor poziomu"
+                {
+                    Boolean flagSelected = false; // flaga sprawdzajaca czy wybrano poziom
+                    if (e.X > 325 && e.X < (325+75) && e.Y < (271 + 75) && e.Y > 271) // wybrany poziom 1
+                    {
+                        flagSelected = true;
+                        gStatus.level = 1;
+                    }
+                    else if (e.X > (325 + 150) && e.X < (325 + 225) && e.Y < (271 + 75) && e.Y > 271) // wybrany poziom 2
+                    {
+                        flagSelected = true;
+                        gStatus.level = 2;
+                    } 
+                    else if (e.X > (325 + 300) && e.X < (325 + 375) && e.Y < (271 + 75) && e.Y > 271) // wybrany poziom 3
+                    {
+                        flagSelected = true;
+                        gStatus.level = 3;
+                    }
+                    else if (e.X > (325 + 75) && e.X < (325 + 150) && e.Y < (271 + 225) && e.Y > (271 + 150)) // wybrany poziom 4
+                    {
+                        flagSelected = true;
+                        gStatus.level = 4;
+                    }
+                    else if (e.X > (325 + 225) && e.X < (325 + 300) && e.Y < (271 + 225) && e.Y > (271 + 150)) // wybrany poziom 5
+                    {
+                        flagSelected = true;
+                        gStatus.level = 5;
+                    }
 
+                    if (flagSelected)
+                    {
+                        gStatus.resetPoints();
+                        GPars.pause = false;
+                        GPars.end = false;
+                        GPars.gLevelSel = false;
+                        GPars.gStarted = true;
+                        initLevel();
+                        Invalidate();
+                    }
+                }
+
+                if (!GPars.gMenu || !GPars.pause)
+                {
+                    if (e.X > 820 && e.X < 975 && e.Y > 30 && e.Y < 80)
+                    {
+                        GPars.pause = true;
+                        GPars.gMenu = true;
+                        GPars.gLevelSel = false;
+                        GPars.gInformation = false;
+                        Invalidate();
+                    }
+                }
+            }
         } // koniec OnMouseDown
 
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            for (int i=0; i< GPars.noOfObjects; i++)
+            if (!GPars.pause && !GPars.end)
             {
-                if (e.Button == MouseButtons.Left && !GPars.pause) // poruszanie klockiem w poziomie
+                if (e.Button == MouseButtons.Left) // poruszanie klockiem w poziomie
                 {
-                    if (MouseDownLocation.X > blocks[i].rec.Left && MouseDownLocation.X < (blocks[i].rec.Left + blocks[i].width) && MouseDownLocation.Y > blocks[i].rec.Top && MouseDownLocation.Y < (blocks[i].rec.Top + blocks[i].height))
+                    for (int i = 0; i < GPars.noOfObjects; i++)
                     {
-                        if (blocks[i].type == 3 || blocks[i].type == 2 )
+                        if (MouseDownLocation.X > blocks[i].rec.Left && MouseDownLocation.X < (blocks[i].rec.Left + blocks[i].width) && MouseDownLocation.Y > blocks[i].rec.Top && MouseDownLocation.Y < (blocks[i].rec.Top + blocks[i].height))
                         {
-                            if (Block.MoveCheck(blocks[i].rec, i, (e.X - MouseDownLocation.X), 0)) // sprawdzenie mozliwosci wykonania ruchu
+                            if (blocks[i].type == 3 || blocks[i].type == 2)
                             {
-                                blocks[i].rec.Location = new Point((e.X - MouseDownLocation.X) + blocks[i].rec.Left, blocks[i].rec.Top);
-                                MouseDownLocation = e.Location;
-                                ExitCheck();
-                                Invalidate();
+                                if (blocks[i].MoveCheck(i, (e.X - MouseDownLocation.X), 0)) // sprawdzenie mozliwosci wykonania ruchu
+                                {
+                                    blocks[i].rec.Location = new Point((e.X - MouseDownLocation.X) + blocks[i].rec.Left, blocks[i].rec.Top);
+                                    MouseDownLocation = e.Location;
+                                    ExitCheck();
+                                    Invalidate();
+                                }
                             }
                         }
                     }
                 }
-                else if (e.Button == MouseButtons.Right && !GPars.pause) // poruszanie klockiem w pionie
+                else if (e.Button == MouseButtons.Right) // poruszanie klockiem w pionie
                 {
-                    if (MouseDownLocation.X > blocks[i].rec.Left && MouseDownLocation.X < (blocks[i].rec.Left + blocks[i].width) && MouseDownLocation.Y > blocks[i].rec.Top && MouseDownLocation.Y < (blocks[i].rec.Top + blocks[i].height))
+                    for (int i = 0; i < GPars.noOfObjects; i++)
                     {
-
-                        if (blocks[i].type == 3 || blocks[i].type == 1)
+                        if (MouseDownLocation.X > blocks[i].rec.Left && MouseDownLocation.X < (blocks[i].rec.Left + blocks[i].width) && MouseDownLocation.Y > blocks[i].rec.Top && MouseDownLocation.Y < (blocks[i].rec.Top + blocks[i].height))
                         {
-                            if (Block.MoveCheck(blocks[i].rec, i, 0, (e.Y - MouseDownLocation.Y))) // sprawdzenie mozliwosci wykonania ruchu
+
+                            if (blocks[i].type == 3 || blocks[i].type == 1)
                             {
-                                blocks[i].rec.Location = new Point(blocks[i].rec.Left, (e.Y - MouseDownLocation.Y) + blocks[i].rec.Top);
-                                MouseDownLocation = e.Location;
-                                ExitCheck();
-                                Invalidate();
+                                if (blocks[i].MoveCheck(i, 0, (e.Y - MouseDownLocation.Y))) // sprawdzenie mozliwosci wykonania ruchu
+                                {
+                                    blocks[i].rec.Location = new Point(blocks[i].rec.Left, (e.Y - MouseDownLocation.Y) + blocks[i].rec.Top);
+                                    MouseDownLocation = e.Location;
+                                    ExitCheck();
+                                    Invalidate();
+                                }
                             }
                         }
                     }
                 }
             }
+
         }// koniec OnMouseMove
 
 
@@ -240,28 +352,48 @@ namespace LabiryntWiedzy
         private void restartGame() 
         {
             gStatus.resetPoints();
-            gStatus.gStarted = false;
+            GPars.gStarted = false;
             GPars.pause = true;
-            blocks[0]= new Block(labirynthRec.X +170, labirynthRec.Y + 170, 75, 75, 3, GPars.blocksImages[0]); // 75x75 --> 1x1
-            blocks[1]= new Block(labirynthRec.X, labirynthRec.Y, 160, 75, 2, GPars.blocksImages[4]); // 160x75 --> 2x1
-            blocks[2] = new Block(labirynthRec.X + 85, labirynthRec.Y + 85, 160, 75, 2, GPars.blocksImages[4]); // 160x75 --> 2x1
-            blocks[3] = new Block(labirynthRec.X, labirynthRec.Y + 85, 75, 160, 1, GPars.blocksImages[1]); // 75x160 --> 1x2
-            blocks[4] = new Block(labirynthRec.X + 340 , labirynthRec.Y, 75, 245, 1, GPars.blocksImages[2]); // 75x245 --> 1x3
-            blocks[5] = new Block(labirynthRec.X, labirynthRec.Y + 255, 160, 75, 2, GPars.blocksImages[4]); // 160x75 --> 2x1
-            blocks[6] = new Block(labirynthRec.X, labirynthRec.Y + 340, 330, 75, 2, GPars.blocksImages[6]); // 330x75 --> 4x1
-            blocks[7] = new Block(labirynthRec.X + 255, labirynthRec.Y + 255, 160, 75, 2, GPars.blocksImages[4]); // 160x75 --> 2x1
-            blocks[8] = new Block(1500, 1500, 75, 245, 1, GPars.blocksImages[2]); // 75x245 --> 1x3
-            blocks[9] = new Block(1500, 1500, 75, 245, 1, GPars.blocksImages[2]); // 75x245 --> 1x3
-            blocks[10] = new Block(1500, 1500, 245, 75, 2, GPars.blocksImages[5]); // 245x75 --> 3x1
-            blocks[11] = new Block(1500, 1500, 245, 75, 2, GPars.blocksImages[5]); // 245x75 --> 3x1
-            gStatus.rightAns = 1;
-
+            GPars.gInformation = false;
+            GPars.gLevelSel = false;
+            GPars.gMenu = true;
+            blocks[0] = new Block(1, 1, 75, 75, 3, GPars.blocksImages[0]); // 75x75 --> 1x1
+            blocks[1] = new Block(1, 1, 160, 75, 2, GPars.blocksImages[4]); // 160x75 --> 2x1
+            blocks[2] = new Block(1, 1, 160, 75, 2, GPars.blocksImages[4]); // 160x75 --> 2x1
+            blocks[3] = new Block(1, 1, 75, 160, 1, GPars.blocksImages[1]); // 75x160 --> 1x2
+            blocks[4] = new Block(1, 1, 75, 245, 1, GPars.blocksImages[2]); // 75x245 --> 1x3
+            blocks[5] = new Block(1, 1, 160, 75, 2, GPars.blocksImages[4]); // 160x75 --> 2x1
+            blocks[6] = new Block(1, 1, 330, 75, 2, GPars.blocksImages[6]); // 330x75 --> 4x1
+            blocks[7] = new Block(1, 1, 160, 75, 2, GPars.blocksImages[4]); // 160x75 --> 2x1
+            blocks[8] = new Block(1, 1, 75, 245, 1, GPars.blocksImages[2]); // 75x245 --> 1x3
+            blocks[9] = new Block(1, 1, 75, 245, 1, GPars.blocksImages[2]); // 75x245 --> 1x3
+            blocks[10] = new Block(1, 1, 245, 75, 2, GPars.blocksImages[5]); // 245x75 --> 3x1
+            blocks[11] = new Block(1, 1, 245, 75, 2, GPars.blocksImages[5]); // 245x75 --> 3x1
+            initLevel();
         }//koniec restartGame()
 
         public void initLevel() //funkcja do ustawiania polozenia klockow na planszy
         {
 
-           if (gStatus.level == 2 && !GPars.end)
+            if (gStatus.level == 1 && !GPars.end)
+            {
+                blocks[0].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 170);
+                blocks[1].rec.Location = new Point(labirynthRec.X, labirynthRec.Y);
+                blocks[2].rec.Location = new Point(labirynthRec.X + 85, labirynthRec.Y + 85);
+                blocks[3].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 85);
+                blocks[4].rec.Location = new Point(labirynthRec.X + 340, labirynthRec.Y);
+                blocks[5].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 255);
+                blocks[6].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 340);
+                blocks[7].rec.Location = new Point(labirynthRec.X + 255, labirynthRec.Y + 255);
+                blocks[8].rec.Location = new Point(1500, 1500);
+                blocks[9].rec.Location = new Point(1500, 1500);
+                blocks[10].rec.Location = new Point(1500, 1500);
+                blocks[11].rec.Location = new Point(1500, 1500);
+                questionLabel.Text = "Pytanie nr 1: \n\nJaki ładunek elektryczny ma elektron?\n1) neutralny\n2) ujemny";
+                gStatus.rightAns = 2;
+            }
+
+            else if (gStatus.level == 2 && !GPars.end)
             {
                 blocks[0].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y );
                 blocks[1].rec.Location = new Point(1500, 1500);
@@ -275,29 +407,14 @@ namespace LabiryntWiedzy
                 blocks[9].rec.Location = new Point(labirynthRec.X + 255, labirynthRec.Y);
                 blocks[10].rec.Location = new Point(labirynthRec.X+ 170, labirynthRec.Y + 340);
                 blocks[11].rec.Location = new Point(1500, 1500);
+                questionLabel.Text = "Pytanie nr 2: \n\nKto jest autorem wiersza pt. \"Nic dwa razy\"?\n1) Wisława Szymborska\n2) Sanah";
                 gStatus.rightAns = 1;
             }
            else if (gStatus.level == 3 && !GPars.end)
             {
                 blocks[0].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 170);
-                blocks[1].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 170);
-                blocks[2].rec.Location = new Point(1500,1500);
-                blocks[3].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 255);
-                blocks[4].rec.Location = new Point(labirynthRec.X + 340, labirynthRec.Y );
-                blocks[5].rec.Location = new Point(1500,1500);
-                blocks[6].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 85);
-                blocks[7].rec.Location = new Point(1500,1500);
-                blocks[8].rec.Location = new Point(1500,1500);
-                blocks[9].rec.Location = new Point(1500,1500);
-                blocks[10].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 340);
-                blocks[11].rec.Location = new Point(1500, 1500);
-                gStatus.rightAns = 2;
-            }
-            else if (gStatus.level == 4 && !GPars.end)
-            {
-                blocks[0].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 170);
                 blocks[1].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 85);
-                blocks[2].rec.Location = new Point(labirynthRec.X + 85, labirynthRec.Y + 255); 
+                blocks[2].rec.Location = new Point(labirynthRec.X + 85, labirynthRec.Y + 255);
                 blocks[3].rec.Location = new Point(1500, 1500);
                 blocks[4].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 170);
                 blocks[5].rec.Location = new Point(1500, 1500);
@@ -307,11 +424,44 @@ namespace LabiryntWiedzy
                 blocks[9].rec.Location = new Point(1500, 1500);
                 blocks[10].rec.Location = new Point(labirynthRec.X, labirynthRec.Y);
                 blocks[11].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 340);
-                gStatus.rightAns = 1;
+                questionLabel.Text = "Pytanie nr 3: \n\nCo trafia do niebieskiego pojemnika na śmieci?\n1) Plastik\n2) Papier";
+                gStatus.rightAns = 2;
+            }
+            else if (gStatus.level == 4 && !GPars.end)
+            {
+
+                blocks[0].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 170);
+                blocks[1].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 170);
+                blocks[2].rec.Location = new Point(1500, 1500);
+                blocks[3].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 255);
+                blocks[4].rec.Location = new Point(labirynthRec.X + 340, labirynthRec.Y);
+                blocks[5].rec.Location = new Point(1500, 1500);
+                blocks[6].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 85);
+                blocks[7].rec.Location = new Point(1500, 1500);
+                blocks[8].rec.Location = new Point(1500, 1500);
+                blocks[9].rec.Location = new Point(1500, 1500);
+                blocks[10].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 340);
+                blocks[11].rec.Location = new Point(1500, 1500);
+                questionLabel.Text = "Pytanie nr 4: \n\nZ jakich pierwiastków składa się woda?\n1) Węgla i tlenu\n2) Wodoru i tlenu";
+                gStatus.rightAns = 2;
+
             }
             else if (gStatus.level == 5 && !GPars.end)
             {
-
+                blocks[0].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 170);
+                blocks[1].rec.Location = new Point(labirynthRec.X, labirynthRec.Y);
+                blocks[2].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 255);
+                blocks[3].rec.Location = new Point(labirynthRec.X + 255, labirynthRec.Y);
+                blocks[4].rec.Location = new Point(labirynthRec.X, labirynthRec.Y + 85);
+                blocks[5].rec.Location = new Point(1500, 1500);
+                blocks[6].rec.Location = new Point(1500, 1500);
+                blocks[7].rec.Location = new Point(1500, 1500);
+                blocks[8].rec.Location = new Point(labirynthRec.X + 85, labirynthRec.Y + 170);
+                blocks[9].rec.Location = new Point(labirynthRec.X + 340, labirynthRec.Y + 85);
+                blocks[10].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 340);
+                blocks[11].rec.Location = new Point(1500, 1500);
+                questionLabel.Text = "Pytanie nr 5: \n\nKto postawił pierwszy krok na księżycu?\n1) Louis Armstrong\n2) Neil Armstrong";
+                gStatus.rightAns = 2;
             }
 
 
