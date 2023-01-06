@@ -7,6 +7,9 @@ using System.Globalization;
 using System.Drawing.Drawing2D;
 using System.Media;
 
+using System.Diagnostics;
+using System.Threading;
+
 namespace LabiryntWiedzy
 {
     public class GamePanel : Panel
@@ -15,9 +18,10 @@ namespace LabiryntWiedzy
         public int sHeight; //Wysokość pola graficznego gry
         public int barHeight; //Wysokość paska menu
         public GameStatus gStatus; // zmienna reprezentujaca stan gry  0-stan poczatkowy, rysowanie menu
-        public FontFamily fontFamily; //
-        public Font menuFont; //Czcionki stosowane w pasku Menu
-        public Font questionFont; //Czcionki stosowane do wypisania pytan
+        public FontFamily fontFamily; //Rodzina używanych czcionek
+        public Font menuFont; //Czcionka stosowana w pasku Menu
+        public Font menuFontv2; //Czcionka stosowana w pasku Menu - wersja zmniejszona
+        public Font questionFont; //Czcionka stosowane do wypisania pytan
         public static Block[] blocks; // tablica obiektów pierwszego planu - klocki
         public static Rectangle startMenuRec; // // prostokat reprezentujacy startowe menu
         public static Rectangle labirynthRec; // prostokat reprezentujacy labirynt
@@ -33,6 +37,7 @@ namespace LabiryntWiedzy
         {
             gStatus = new GameStatus();
             gStatus.reset();
+            gStatus.deleteResults();
 
             DoubleBuffered = true; // zapobieganie efektu typu blinking
             this.sWidth = width;
@@ -43,6 +48,7 @@ namespace LabiryntWiedzy
 
             fontFamily = new FontFamily("Haettenschweiler");
             menuFont = new Font(fontFamily, 52, FontStyle.Regular, GraphicsUnit.Pixel);
+            menuFontv2 = new Font(fontFamily, 42, FontStyle.Regular, GraphicsUnit.Pixel);
             questionFont = new Font(fontFamily, 32, FontStyle.Regular, GraphicsUnit.Pixel);
 
             startMenuRec = new Rectangle((sWidth - 400) / 2, (sHeight - 400) / 2, 400, 400);
@@ -65,6 +71,8 @@ namespace LabiryntWiedzy
             SoundPlayer sp = new SoundPlayer();
             //sp.SoundLocation = "music/bg_music.wav";
             //sp.PlayLooping();
+
+            GPars.stopwatch = new Stopwatch();
 
             blocks = new Block[GPars.noOfObjects];
             restartGame();
@@ -105,7 +113,7 @@ namespace LabiryntWiedzy
                     g.DrawString("Wyjdź z gry", menuFont, Brushes.White, new Point(400, 475));
                     questionLabel.Visible = false;
 
-                    if (GPars.gStarted) g.DrawString("Kontynuuj grę", menuFont, Brushes.White, new Point(390, 225));
+                    if (GPars.gStarted && !GPars.end) g.DrawString("Kontynuuj grę", menuFont, Brushes.White, new Point(390, 225));
                     else g.DrawString("Nowa gra", menuFont, Brushes.White, new Point(420, 225));
                 }
 
@@ -142,6 +150,8 @@ namespace LabiryntWiedzy
                     g.DrawPath(Whitepen, shortMenu); // narysowanie obwodki
                     g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), shortMenu); // wypelnienie
 
+                    g.DrawImage(GPars.howToPlayImage, 0, 0);
+
                     g.DrawImage(GPars.logoImage, 860, 680);// narysowanie loga
                     g.DrawImage(GPars.menuImage, new Point(820, 20)); // narysowanie ikony menu
                 }
@@ -177,15 +187,21 @@ namespace LabiryntWiedzy
                 g.DrawLine(Redpen, new Point(labirynthRec.Left, labirynthRec.Bottom - 170), new Point(labirynthRec.Left, labirynthRec.Bottom - 75)); // linia wyjscia nr2
 
                 for (int i = 0; i < GPars.noOfObjects; i++) g.DrawImage(blocks[i].icon, blocks[i].rec.Left, blocks[i].rec.Top); // rysowanie klockow
-             
-                if (GPars.end)
-                {
-                    GraphicsPath endPanel = Block.RoundedRect(new Rectangle(questionRec.Left, questionRec.Bottom + 50, questionRec.Width, 57), 10); // pasek menu z zaokraglonymi rogami
-                    g.DrawPath(Whitepen, endPanel); // narysowanie obwodki
-                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), endPanel); // wypelnienie
 
-                    g.DrawString("KONIEC GRY!", menuFont, Brushes.Red, new Point(questionRec.Left+45, questionRec.Bottom + 50));
+                if(GPars.lvlEnd)
+                {
+                    GraphicsPath nextLvlPanel = Block.RoundedRect(new Rectangle(questionRec.Left, questionRec.Bottom + 50, questionRec.Width, labirynthRec.Bottom-questionRec.Bottom - 50), 10); // pasek menu z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, nextLvlPanel); // narysowanie obwodki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), nextLvlPanel); // wypelnienie
+
+                    if (GPars.rightAns) g.DrawString("Dobra odpowiedź!", menuFontv2, Brushes.Lime, new Point(questionRec.Left + 30 , questionRec.Bottom + 70));
+                    else g.DrawString("Zła odpowiedź!", menuFontv2, Brushes.Red, new Point(questionRec.Left + 45 , questionRec.Bottom + 70));
+
+                    if (GPars.end) g.DrawString("Koniec Gry", menuFontv2, Brushes.White, new Point(questionRec.Left + 75, questionRec.Bottom + 135));
+                    else g.DrawString("Następny poziom", menuFontv2, Brushes.White, new Point(questionRec.Left + 35, questionRec.Bottom + 135));
+
                 }
+       
             }
             Whitepen.Dispose();
             Redpen.Dispose();
@@ -194,7 +210,7 @@ namespace LabiryntWiedzy
         protected override void OnMouseDown( MouseEventArgs e)
         {
             MouseDownLocation = e.Location;
-            //Console.WriteLine(e.Location);
+
             if (e.Button == MouseButtons.Left)
             {
                 if (GPars.pause && GPars.gMenu)
@@ -202,8 +218,15 @@ namespace LabiryntWiedzy
                     //Czy wybrano opcję nowa gra w startowym menu
                     if (e.X > 395 && e.X < 630 && e.Y > 225 && e.Y < 285)
                     {
+                        GPars.stopwatch.Start();
+                        if (GPars.end)
+                        {
+                            gStatus.reset();
+                            restartGame();
+                        }
                         if (!GPars.gStarted) GPars.gStarted = true;
                         GPars.pause = false;
+                        GPars.gMenu = false;
                         Invalidate();
                     }
                     //Czy wybrano opcję wybor poziomu w startowym menu
@@ -223,6 +246,7 @@ namespace LabiryntWiedzy
                     //Czy wybrano wyjdz z gry w startowym menu
                     if (e.X > 400 && e.X < 615 && e.Y < 535 && e.Y > 480)
                     {
+                        gStatus.saveResults();
                         Application.Exit();
                     }
                 }
@@ -261,9 +285,28 @@ namespace LabiryntWiedzy
                         gStatus.resetPoints();
                         GPars.pause = false;
                         GPars.end = false;
+                        GPars.lvlEnd = false;
                         GPars.gLevelSel = false;
                         GPars.gStarted = true;
                         initLevel();
+                        GPars.stopwatch.Reset();
+                        GPars.stopwatch.Start();
+                        Invalidate();
+                    }
+                }
+
+                if (!GPars.pause && !GPars.gMenu && GPars.lvlEnd )
+                {
+                    if (e.X > 700 && e.X < 935 && e.Y < 595 && e.Y > 555)
+                    {
+                        gStatus.nextLevel();
+                        if (!GPars.end)
+                        {
+                            GPars.lvlEnd = false;
+                            initLevel();
+                            GPars.stopwatch.Reset();
+                            GPars.stopwatch.Start();
+                        }
                         Invalidate();
                     }
                 }
@@ -272,6 +315,7 @@ namespace LabiryntWiedzy
                 {
                     if (e.X > 820 && e.X < 975 && e.Y > 30 && e.Y < 80)
                     {
+                        GPars.stopwatch.Stop();
                         GPars.pause = true;
                         GPars.gMenu = true;
                         GPars.gLevelSel = false;
@@ -285,7 +329,7 @@ namespace LabiryntWiedzy
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (!GPars.pause && !GPars.end)
+            if (!GPars.pause && !GPars.end && !GPars.lvlEnd)
             {
                 if (e.Button == MouseButtons.Left) // poruszanie klockiem w poziomie
                 {
@@ -332,28 +376,39 @@ namespace LabiryntWiedzy
 
 
 
-        public void ExitCheck()
+        private void ExitCheck()
         {
-            if (blocks[0].rec.IntersectsWith(exit1Rec))
+            if (blocks[0].rec.IntersectsWith(exit1Rec) || blocks[0].rec.IntersectsWith(exit2Rec))
             {
-                gStatus.nextLevel();
-                if (gStatus.rightAns == 1) gStatus.points += 1;
-                initLevel();
-            }
-            else if (blocks[0].rec.IntersectsWith(exit2Rec))
-            {
-                gStatus.nextLevel();
-                if (gStatus.rightAns == 2) gStatus.points += 1;
-                initLevel();
+                GPars.stopwatch.Stop();
+                gStatus.saveLevelPassTime();
+                GPars.lvlEnd = true;
+                if (GPars.questionAns == 1 && blocks[0].rec.IntersectsWith(exit1Rec) )
+                {
+                    GPars.rightAns = true;
+                    gStatus.points += 1;
+                }
+                else if (GPars.questionAns == 2 && blocks[0].rec.IntersectsWith(exit2Rec) )
+                {
+                    GPars.rightAns = true;
+                    gStatus.points += 1;
+                }
+                else GPars.rightAns = false;
+
+                if(gStatus.level==GPars.noOfLevels) GPars.end = true;
             }
 
         } //koniec ExitCheck
 
         private void restartGame() 
         {
-            gStatus.resetPoints();
-            GPars.gStarted = false;
+            gStatus.reset();
+            GPars.stopwatch.Stop();
+            GPars.stopwatch.Restart();
             GPars.pause = true;
+            GPars.end = false;
+            GPars.lvlEnd = false;
+            GPars.gStarted = false;
             GPars.gInformation = false;
             GPars.gLevelSel = false;
             GPars.gMenu = true;
@@ -372,7 +427,7 @@ namespace LabiryntWiedzy
             initLevel();
         }//koniec restartGame()
 
-        public void initLevel() //funkcja do ustawiania polozenia klockow na planszy
+        private void initLevel() //funkcja do ustawiania polozenia klockow na planszy
         {
 
             if (gStatus.level == 1 && !GPars.end)
@@ -390,7 +445,7 @@ namespace LabiryntWiedzy
                 blocks[10].rec.Location = new Point(1500, 1500);
                 blocks[11].rec.Location = new Point(1500, 1500);
                 questionLabel.Text = "Pytanie nr 1: \n\nJaki ładunek elektryczny ma elektron?\n1) neutralny\n2) ujemny";
-                gStatus.rightAns = 2;
+                GPars.questionAns = 2;
             }
 
             else if (gStatus.level == 2 && !GPars.end)
@@ -408,7 +463,7 @@ namespace LabiryntWiedzy
                 blocks[10].rec.Location = new Point(labirynthRec.X+ 170, labirynthRec.Y + 340);
                 blocks[11].rec.Location = new Point(1500, 1500);
                 questionLabel.Text = "Pytanie nr 2: \n\nKto jest autorem wiersza pt. \"Nic dwa razy\"?\n1) Wisława Szymborska\n2) Sanah";
-                gStatus.rightAns = 1;
+                GPars.questionAns = 1;
             }
            else if (gStatus.level == 3 && !GPars.end)
             {
@@ -425,7 +480,7 @@ namespace LabiryntWiedzy
                 blocks[10].rec.Location = new Point(labirynthRec.X, labirynthRec.Y);
                 blocks[11].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 340);
                 questionLabel.Text = "Pytanie nr 3: \n\nCo trafia do niebieskiego pojemnika na śmieci?\n1) Plastik\n2) Papier";
-                gStatus.rightAns = 2;
+                GPars.questionAns = 2;
             }
             else if (gStatus.level == 4 && !GPars.end)
             {
@@ -443,7 +498,7 @@ namespace LabiryntWiedzy
                 blocks[10].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 340);
                 blocks[11].rec.Location = new Point(1500, 1500);
                 questionLabel.Text = "Pytanie nr 4: \n\nZ jakich pierwiastków składa się woda?\n1) Węgla i tlenu\n2) Wodoru i tlenu";
-                gStatus.rightAns = 2;
+                GPars.questionAns = 2;
 
             }
             else if (gStatus.level == 5 && !GPars.end)
@@ -460,8 +515,8 @@ namespace LabiryntWiedzy
                 blocks[9].rec.Location = new Point(labirynthRec.X + 340, labirynthRec.Y + 85);
                 blocks[10].rec.Location = new Point(labirynthRec.X + 170, labirynthRec.Y + 340);
                 blocks[11].rec.Location = new Point(1500, 1500);
-                questionLabel.Text = "Pytanie nr 5: \n\nKto postawił pierwszy krok na księżycu?\n1) Louis Armstrong\n2) Neil Armstrong";
-                gStatus.rightAns = 2;
+                questionLabel.Text = "Pytanie nr 5: \n\nKto postawił pierwszy krok na księżycu?\n1) Neil Armstrong \n2) Louis Armstrong";
+                GPars.questionAns = 1;
             }
 
 

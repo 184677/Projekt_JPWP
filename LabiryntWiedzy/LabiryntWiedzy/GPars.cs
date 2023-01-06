@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace LabiryntWiedzy
 {
@@ -12,21 +14,22 @@ namespace LabiryntWiedzy
         public static Image logoImage; //Obraz ikony logo
         public static Image ans1Image; //Obraz ikony wyjscia nr1
         public static Image ans2Image; //Obraz ikony wyjścia nr2
+        public static Image howToPlayImage; //Grafika do wyłumaczenia jak grac
         public static Image[] blocksImages; //Tablica grafik obiektów pierwszego planu
         public static Image[] lvlImages; //Tablica grafik ikon wyboru poziomu
-        public static Boolean pause = false; //Zmienna stanu określającam czy jest przerwa w grze
-        //public static Boolean levelPause = false; // Zmienna stanu określająca czy wybrano menu
-        public static Boolean end = false;
+        public static Boolean pause = false; //Zmienna stanu określająca czy jest przerwa w grze
+        public static Boolean end = false; //Zmienna stanu określająca zakończono gre
+        public static Boolean lvlEnd = false; // Zmienna stanu określająca czy skończono poziom
         public static Boolean gStarted = false; //Zmienna stanu określająca czy rozpoczeto gre
         public static Boolean gInformation = false; // Zmienna stanu okreslajaca czy wybrano z menu informacje o grze
         public static Boolean gLevelSel = false; // Zmienna stanu okreslajaca czy wybrano z menu wybor poziomow
         public static Boolean gMenu = false; // Zmienna stanu okreslajaca czy wyswietlic menu
-        //public static int 
-        //public static long startTime;
-        //public static double levelTime;
+        public static int questionAns; //Zmienna określająca prawidlowa odpowiedz w danym poziomie
+        public static Boolean rightAns = false; //Zmienna okreslajaca czy wybrano prawidlowa odpowiedz
         public static int noOfObjects = 12; //Zmienna pomocnicza określająca liczę obiektów pierwszego planu
+        public static int noOfLevels = 5; //Zmienna pomocnicza określająca liczę poziomów w grze
+        public static Stopwatch stopwatch; // stoper do mierzenia czasu przejscia poszczegolnych poziomow
 
-       
 
 
         public static void loadInitialImages()
@@ -46,6 +49,8 @@ namespace LabiryntWiedzy
 
             ans1Image = Image.FromFile("images/ans_1.png");
             ans2Image = Image.FromFile("images/ans_2.png");
+
+            howToPlayImage = Image.FromFile("images/h2p.png");
 
             blocksImages = new Image[7];
             blocksImages[0] = Image.FromFile("images/block_runner.png");

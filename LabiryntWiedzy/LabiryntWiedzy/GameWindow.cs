@@ -24,27 +24,11 @@ namespace LabiryntWiedzy
         private void initGUI(int width, int height)
         {
             GPars.loadInitialImages();
-            //this.Cursor = new Cursor("images/default.ico"); // ustawienie inne wygladu kursora myszki
             Controls.Add(new GamePanel(width, height)); // dodanie panelu gry zawierający grafikę i akcję
 
         }//koniec initGUI()
 
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            // 
-            // GameWindow
-            // 
-            this.ClientSize = new System.Drawing.Size(824, 527);
-            this.Name = "GameWindow";
-            this.Load += new System.EventHandler(this.GameWindow_Load);
-            this.ResumeLayout(false);
+       
 
-        }
-
-        private void GameWindow_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }
