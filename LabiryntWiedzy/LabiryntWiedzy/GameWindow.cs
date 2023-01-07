@@ -6,29 +6,37 @@ using System.Drawing;
 
 namespace LabiryntWiedzy
 {
+    /// <summary>
+    /// Okno główne gry
+    /// </summary>
     public class GameWindow:Form
-    { 
-        
+    {
+        /// <summary>
+        /// Główny konstruktor klasy - ustawienie parametrów i rozpoczęcie akcji
+        /// </summary>
+        /// <param name="width">Szerokość okna</param>
+        /// <param name="height">Wysokość okna</param>
         public GameWindow(int width, int height)
         {
             
-            Size = new System.Drawing.Size(width, height); // ustawienie wymiarow okna
-            StartPosition = FormStartPosition.CenterScreen;  // ustawienie pozycji poczatkowej na srodek
-            FormBorderStyle = FormBorderStyle.FixedSingle; // zablokowanie mozliwosci zmiany rozmiaru okna
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None; // ukrycie ramki okna i przyciskow
-            initGUI(width, height);
-            Application.Run(this);  // wyswietlenie okna
+            Size = new System.Drawing.Size(width, height); // Ustawienie wymiarów okna
+            StartPosition = FormStartPosition.CenterScreen;  // Ustawienie pozycji początkowej na środek
+            FormBorderStyle = FormBorderStyle.FixedSingle; // Zablokowanie możliwości zmiany rozmiaru okna
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None; // Ukrycie ramki okna i przycisków
+            initGUI(width, height); // Wywołanie metody budowy interfejsu
+            Application.Run(this);  // Wyświetlenie okna
 
         }//koniec GameWindow()
 
+        /// <summary>
+        /// Utworzenie interfejsu graficznego użytkownika
+        /// </summary>
+        /// <param name="width">Szerokość okna</param>
+        /// <param name="height">Wysokość okna</param>
         private void initGUI(int width, int height)
         {
             GPars.loadInitialImages();
-            Controls.Add(new GamePanel(width, height)); // dodanie panelu gry zawierający grafikę i akcję
-
+            Controls.Add(new GamePanel(width, height)); // Dodanie panelu gry zawierającego grafikę i akcję
         }//koniec initGUI()
-
-       
-
     }
 }

@@ -1,0 +1,408 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LabiryntWiedzy</name>
+    </assembly>
+    <members>
+        <member name="T:LabiryntWiedzy.Block">
+            <summary>
+            Klasa modelująca przesuwany klocek
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.Block.x">
+            <summary>
+            Początkowa współrzędna x obiektu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.Block.y">
+            <summary>
+            Początkowa współrzędna y obiektu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.Block.type">
+            <summary>
+            Rodzaj klocka: 1-porusza się w pionie, 2-porusza się w poziomie, 3-porusza się w pionie i poziomie
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.Block.width">
+            <summary>
+            Szerokość ikony obiektu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.Block.height">
+            <summary>
+            Wysokość ikony obiektu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.Block.rec">
+            <summary>
+            Prostokąt do pobrania obecnych współrzędnych
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.Block.icon">
+            <summary>
+            Ikona obiektu
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.Block.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Drawing.Image)">
+            <summary>
+            Konstruktor - ustawienie parametrów obiektu
+            </summary>
+            <param name="x">Początkowa współrzędna x</param>
+            <param name="y">Początkowa współrzędna y</param>
+            <param name="width">Szerokość klocka</param>
+            <param name="height">Wysokość klocka</param>
+            <param name="type">Typ klocka - rozróżnienie sposobu poruszania</param>
+            <param name="icon">Ikona klocka</param>
+        </member>
+        <member name="M:LabiryntWiedzy.Block.MoveCheck(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Sprawdzenie możliwości poruszania się klocka - 
+            czy nie wystąpiła kolizja z innym klockiem i czy nie przekroczono granic labiryntu
+            </summary>
+            <param name="i">Numer klocka w celu uniknięcia sprawdzania kolizji klocka z samym sobą</param>
+            <param name="x_dif">Wartość przesunięcia na osi X o którą klocek ma być przesunięty</param>
+            <param name="y_dif">Wartość przesunięcia na osi Y o którą klocek ma być przesunięty</param>
+            <returns>Flaga informująca o możliwości wykonania ruchu</returns>
+        </member>
+        <member name="M:LabiryntWiedzy.Block.RoundedRect(System.Drawing.Rectangle,System.Int32)">
+            <summary>
+            Tworzenie serii połączonych linii do narysowania prostokąta z zaokrąglonymi rogami
+            </summary>
+            <param name="bounds">Granice rysowanego prostokąta</param>
+            <param name="radius">Promień zaokrąglonych rogów</param>
+            <returns>Rysnuek prostokąta z zaokrąglonymi rogami</returns>
+        </member>
+        <member name="T:LabiryntWiedzy.GamePanel">
+            <summary>
+            Główny obszar graficzny gry
+            Klasa dziedzicząca po klasie Panel
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.sWidth">
+            <summary>
+            Szerokość pola graficznego gry
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.sHeight">
+            <summary>
+            Wysokość pola graficznego gry
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.barHeight">
+            <summary>
+            Wysokość paska menu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.gStatus">
+            <summary>
+            Obiekt reprezentujący status gry
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.fontFamily">
+            <summary>
+            Rodzina stosowanych czcionek
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.menuFont">
+            <summary>
+            Czcionka stosowana w pasku Menu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.menuFontv2">
+            <summary>
+            Czcionka stosowana w pasku Menu - wersja zmniejszona
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.questionFont">
+            <summary>
+            Czcionka stosowane do wypisania pytan
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.blocks">
+            <summary>
+            Tablica obiektów pierwszego planu - klocki
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.startMenuRec">
+            <summary>
+            Prostokąt reprezentujący startowe menu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.labirynthRec">
+            <summary>
+            Prostokąt reprezentujący labirynt
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.questionRec">
+            <summary>
+            Prostokąt reprezentujący panel z pytaniem
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.barMenuRec">
+            <summary>
+            Prostokąt reprezentujący pasek menu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.shortMenuRec">
+            <summary>
+            Prostokąt reprezentujący skrócony pasek menu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.exit1Rec">
+            <summary>
+            Prostokąt reprezentujący wyjście nr 1
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.exit2Rec">
+            <summary>
+            Prostokąt reprezentujący wyjście nr 2
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.questionLabel">
+            <summary>
+            Obiekt do wyświetlania pytania
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GamePanel.MouseDownLocation">
+            <summary>
+            Punkt do wyliczenia zmian w położeniu myszki 
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GamePanel.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Konstruktor klasy pola graficznego gry. 
+            Ustawienia początkowe oraz ładowanie zasobów
+            </summary>
+            <param name="width">Szerokość pola graficznego gry</param>
+            <param name="height">Wysokość pola graficznego gry</param>
+        </member>
+        <member name="M:LabiryntWiedzy.GamePanel.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Metoda odpowiedzielna za odrysowanie panelu, 
+            wypełnienie w zależności od stanu gry i wybrania odpowiedniej pozycji w menu
+            </summary>
+            <param name="e">Argument obsługi zdarzenia rysowania</param>
+        </member>
+        <member name="M:LabiryntWiedzy.GamePanel.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Metoda odpowiedzialna za obsługę zdarzeń - wciśnięcie przycisku myszki,
+            umożliwia wybranie odpowiedniej pozycji menu, przejście do kolejnego poziomu i śledzi zmianę położenia myszki
+            </summary>
+            <param name="e">Argument obsługi zdarzenia przyciśnięcia przycisku myszki</param>
+        </member>
+        <member name="M:LabiryntWiedzy.GamePanel.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Metoda odpowiedzialna za poruszanie klockami
+            </summary>
+            <param name="e">Argument obsługi zdarzenia przesunięcia myszki</param>
+        </member>
+        <member name="M:LabiryntWiedzy.GamePanel.ExitCheck">
+            <summary>
+            Sprawdzenie czy czerwony klocek dotarł do jednego z 2 wyjść
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GamePanel.restartGame">
+            <summary>
+            Restart gry - ustawienie parametrów oraz obiektów pierwszego planu
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GamePanel.initLevel">
+            <summary>
+            Inicjalizajca poziomu - ustawienie położenia klocków w labiryncie i zmiana wyświetlanego pytania w zależności on numeru poziomu
+            </summary>
+        </member>
+        <member name="T:LabiryntWiedzy.GameStatus">
+            <summary>
+            Klasa pomocnicza z zapisanem stanu gry
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GameStatus.points">
+            <summary>
+            Liczba punktów za poprawne odpowiedzi
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GameStatus.level">
+            <summary>
+            Numer poziomu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GameStatus.sb">
+            <summary>
+             Zmienna do przechowywania czasów przejścia poszczególnych poziomów i ilości prawidłowych odpowiedzi
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GameStatus.reset">
+            <summary>
+            Zerowanie parametrow gry
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GameStatus.resetPoints">
+            <summary>
+            Zerowanie liczby punktów
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GameStatus.nextLevel">
+            <summary>
+            Zwiększenia wskaźnika poziomu
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GameStatus.saveLevelPassTime">
+            <summary>
+            Zapisanie numeru poziomu, czasu przejścia i czy wybrano prawidłową odpowiedź
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GameStatus.saveResults">
+            <summary>
+            Zapisanie wyników gry - czasów przejścia poszczególnych poziomów i ilości prawidłowych odpowiedzi
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GameStatus.deleteResults">
+            <summary>
+            Usunięcie wyników gry z poprzedniego uruchomienia gry
+            </summary>
+        </member>
+        <member name="T:LabiryntWiedzy.GameWindow">
+            <summary>
+            Okno główne gry
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GameWindow.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Główny konstruktor klasy - ustawienie parametrów i rozpoczęcie akcji
+            </summary>
+            <param name="width">Szerokość okna</param>
+            <param name="height">Wysokość okna</param>
+        </member>
+        <member name="M:LabiryntWiedzy.GameWindow.initGUI(System.Int32,System.Int32)">
+            <summary>
+            Utworzenie interfejsu graficznego użytkownika
+            </summary>
+            <param name="width">Szerokość okna</param>
+            <param name="height">Wysokość okna</param>
+        </member>
+        <member name="T:LabiryntWiedzy.GPars">
+            <summary>
+            Klasa - kontener parametrów
+            Odczytuje zasoby graficzne
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.bgImages">
+            <summary>
+            Tablic grafik tła
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.menuImage">
+            <summary>
+            Obraz ikony Menu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.logoImage">
+            <summary>
+            Obraz ikony logo
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.ans1Image">
+            <summary>
+            Obraz ikony wyjścia nr 1
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.ans2Image">
+            <summary>
+            Obraz ikony wyjścia nr 2
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.howToPlayImage">
+            <summary>
+            Grafika z wytłumaczaniem jak grać
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.blocksImages">
+            <summary>
+            Tablica grafik obiektów pierwszego planu - klocków
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.lvlImages">
+            <summary>
+            Tablica grafik ikon wyboru poziomu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.pause">
+            <summary>
+            Zmienna stanu określająca czy jest przerwa w grze
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.end">
+            <summary>
+            Zmienna stanu określająca zakończono gre
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.lvlEnd">
+            <summary>
+            Zmienna stanu określająca czy skończono poziom
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.gStarted">
+            <summary>
+            Zmienna stanu określająca czy rozpoczęto grę
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.gInformation">
+            <summary>
+            Zmienna stanu określająca czy wybrano z menu pozycję "O grze..."
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.gLevelSel">
+            <summary>
+            Zmienna stanu określająca czy wybrano z menu pozycję "Wybierz poziom"
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.gMenu">
+            <summary>
+            Zmienna stanu określająca czy wyświetlić startowe menu
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.questionAns">
+            <summary>
+            Zmienna określająca prawidłową odpowiedź w danym poziomie
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.rightAns">
+            <summary>
+            Zmienna określająca czy wybrano prawidłową odpowiedź
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.noOfObjects">
+            <summary>
+            Zmienna pomocnicza określająca liczę obiektów pierwszego planu - klocków
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.noOfLevels">
+            <summary>
+            Zmienna pomocnicza określająca liczbę poziomów w grze
+            </summary>
+        </member>
+        <member name="F:LabiryntWiedzy.GPars.stopwatch">
+            <summary>
+            Stoper do mierzenia czasu przejścia poszczególnych poziomów
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.GPars.loadInitialImages">
+            <summary>
+            Metoda ładowania początkowych zasobów gry
+            </summary>
+        </member>
+        <member name="T:LabiryntWiedzy.Program">
+            <summary>
+            Gra - Labirynt Wiedzy
+            Autor - Oskar Bogucki 184677
+            </summary>
+        </member>
+        <member name="M:LabiryntWiedzy.Program.Main(System.String[])">
+            <summary>
+            Metoda uruchamia grę
+            </summary>
+            <param name="args"></param>
+        </member>
+    </members>
+</doc>

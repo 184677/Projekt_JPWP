@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>C:\Users\Lenovo\Documents\GitHub\Projekt_JPWP\LabiryntWiedzy\LabiryntWiedzy\LabiryntWiedzy.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

@@ -5,30 +5,54 @@ using System.IO;
 
 namespace LabiryntWiedzy
 {
+    /// <summary>
+    /// Klasa pomocnicza z zapisanem stanu gry
+    /// </summary>
     public class GameStatus
     {
-        public int points; // Liczba punktow za poprawne odpowiedzi
-        public int level; //Numer poziomu
-        public StringBuilder sb = new StringBuilder(1000); // zmienna do przechowywania czasow przejscia poszczegolnych poziomow i ilosci prawidlowych odpowiedzi
+        /// <summary>
+        /// Liczba punktów za poprawne odpowiedzi
+        /// </summary>
+        public int points;
+        /// <summary>
+        /// Numer poziomu
+        /// </summary>
+        public int level;
+        /// <summary>
+        ///  Zmienna do przechowywania czasów przejścia poszczególnych poziomów i ilości prawidłowych odpowiedzi
+        /// </summary>
+        public StringBuilder sb = new StringBuilder(1000);
 
-        public void reset() // Zerowanie parametrow gry
+        /// <summary>
+        /// Zerowanie parametrow gry
+        /// </summary>
+        public void reset()
         {
             points = 0;
             level = 1;
-        }//reset()
- 
-        public void resetPoints() // zerowanie liczby punktow
+        }//koniec reset()
+
+        /// <summary>
+        /// Zerowanie liczby punktów
+        /// </summary>
+        public void resetPoints() 
         {
             points = 0;
-        }//resetPoints()
+        }//koniec resetPoints()
 
-        public void nextLevel() // zwiekszenie wskaznika poziomu
+        /// <summary>
+        /// Zwiększenia wskaźnika poziomu
+        /// </summary>
+        public void nextLevel() 
         {
             if (level < GPars.noOfLevels) level++;
             else GPars.end = true;
 
-        }//nextLevel()
+        }//koniec nextLevel()
 
+        /// <summary>
+        /// Zapisanie numeru poziomu, czasu przejścia i czy wybrano prawidłową odpowiedź
+        /// </summary>
         public void saveLevelPassTime() // zapisanie czasu przejscia poziomu
         {
             TimeSpan stopwatchElapsed = GPars.stopwatch.Elapsed;
@@ -40,19 +64,25 @@ namespace LabiryntWiedzy
 
             StringBuilder dane_label = new StringBuilder("Poziom nr: " + level + time + ", czy prawidłowa odpowiedź: " +ans+"\n");
             sb.Append(dane_label);
-        }
+        }// koniec saveLevelPassTime()
 
+        /// <summary>
+        /// Zapisanie wyników gry - czasów przejścia poszczególnych poziomów i ilości prawidłowych odpowiedzi
+        /// </summary>
         public void saveResults() // zapisanie czasow przejscia poszczegolnych poziomow i ilosci prawidlowych odpowiedzi
         {
             using (StreamWriter sw = new StreamWriter("WynikiGry.txt"))
             {
                 sw.WriteLine(sb);
             }
-        }
+        }// koniec saveResults()
 
-        public void deleteResults() // usuniecie czasow przejscia poszczegolnych poziomow i ilosci prawidlowych odpowiedzi
+        /// <summary>
+        /// Usunięcie wyników gry z poprzedniego uruchomienia gry
+        /// </summary>
+        public void deleteResults()
         {
             File.Delete("WynikiGry.txt");
-        }
-    }
+        }// koniec deleteResults()
+    }//koniec class GameStatus
 }

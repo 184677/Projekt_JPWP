@@ -7,35 +7,100 @@ using System.Diagnostics;
 
 namespace LabiryntWiedzy
 {
-    class GPars
+    /// <summary>
+    /// Klasa - kontener parametrów
+    /// Odczytuje zasoby graficzne
+    /// </summary>
+    public class GPars
     {
-        public static Image[] bgImages; //Tablic grafik tła
-        public static Image menuImage; //Obraz ikony Menu
-        public static Image logoImage; //Obraz ikony logo
-        public static Image ans1Image; //Obraz ikony wyjscia nr1
-        public static Image ans2Image; //Obraz ikony wyjścia nr2
-        public static Image howToPlayImage; //Grafika do wyłumaczenia jak grac
-        public static Image[] blocksImages; //Tablica grafik obiektów pierwszego planu
-        public static Image[] lvlImages; //Tablica grafik ikon wyboru poziomu
-        public static Boolean pause = false; //Zmienna stanu określająca czy jest przerwa w grze
-        public static Boolean end = false; //Zmienna stanu określająca zakończono gre
-        public static Boolean lvlEnd = false; // Zmienna stanu określająca czy skończono poziom
-        public static Boolean gStarted = false; //Zmienna stanu określająca czy rozpoczeto gre
-        public static Boolean gInformation = false; // Zmienna stanu okreslajaca czy wybrano z menu informacje o grze
-        public static Boolean gLevelSel = false; // Zmienna stanu okreslajaca czy wybrano z menu wybor poziomow
-        public static Boolean gMenu = false; // Zmienna stanu okreslajaca czy wyswietlic menu
-        public static int questionAns; //Zmienna określająca prawidlowa odpowiedz w danym poziomie
-        public static Boolean rightAns = false; //Zmienna okreslajaca czy wybrano prawidlowa odpowiedz
-        public static int noOfObjects = 12; //Zmienna pomocnicza określająca liczę obiektów pierwszego planu
-        public static int noOfLevels = 5; //Zmienna pomocnicza określająca liczę poziomów w grze
-        public static Stopwatch stopwatch; // stoper do mierzenia czasu przejscia poszczegolnych poziomow
+        /// <summary>
+        /// Tablic grafik tła
+        /// </summary>
+        public static Image[] bgImages;
+        /// <summary>
+        /// Obraz ikony Menu
+        /// </summary>
+        public static Image menuImage;
+        /// <summary>
+        /// Obraz ikony logo
+        /// </summary>
+        public static Image logoImage;
+        /// <summary>
+        /// Obraz ikony wyjścia nr 1
+        /// </summary>
+        public static Image ans1Image;
+        /// <summary>
+        /// Obraz ikony wyjścia nr 2
+        /// </summary>
+        public static Image ans2Image;
+        /// <summary>
+        /// Grafika z wytłumaczaniem jak grać
+        /// </summary>
+        public static Image howToPlayImage;
+        /// <summary>
+        /// Tablica grafik obiektów pierwszego planu - klocków
+        /// </summary>
+        public static Image[] blocksImages;
+        /// <summary>
+        /// Tablica grafik ikon wyboru poziomu
+        /// </summary>
+        public static Image[] lvlImages;
+        /// <summary>
+        /// Zmienna stanu określająca czy jest przerwa w grze
+        /// </summary>
+        public static Boolean pause = false;
+        /// <summary>
+        /// Zmienna stanu określająca zakończono gre
+        /// </summary>
+        public static Boolean end = false;
+        /// <summary>
+        /// Zmienna stanu określająca czy skończono poziom
+        /// </summary>
+        public static Boolean lvlEnd = false;
+        /// <summary>
+        /// Zmienna stanu określająca czy rozpoczęto grę
+        /// </summary>
+        public static Boolean gStarted = false;
+        /// <summary>
+        /// Zmienna stanu określająca czy wybrano z menu pozycję "O grze..."
+        /// </summary>
+        public static Boolean gInformation = false;
+        /// <summary>
+        /// Zmienna stanu określająca czy wybrano z menu pozycję "Wybierz poziom"
+        /// </summary>
+        public static Boolean gLevelSel = false;
+        /// <summary>
+        /// Zmienna stanu określająca czy wyświetlić startowe menu
+        /// </summary>
+        public static Boolean gMenu = false;
+        /// <summary>
+        /// Zmienna określająca prawidłową odpowiedź w danym poziomie
+        /// </summary>
+        public static int questionAns;
+        /// <summary>
+        /// Zmienna określająca czy wybrano prawidłową odpowiedź
+        /// </summary>
+        public static Boolean rightAns = false;
+        /// <summary>
+        /// Zmienna pomocnicza określająca liczę obiektów pierwszego planu - klocków
+        /// </summary>
+        public static int noOfObjects = 12;
+        /// <summary>
+        /// Zmienna pomocnicza określająca liczbę poziomów w grze
+        /// </summary>
+        public static int noOfLevels = 5;
+        /// <summary>
+        /// Stoper do mierzenia czasu przejścia poszczególnych poziomów
+        /// </summary>
+        public static Stopwatch stopwatch;
 
-
-
+        /// <summary>
+        /// Metoda ładowania początkowych zasobów gry
+        /// </summary>
         public static void loadInitialImages()
         {
             /* Pamietac o ustawiania obrazkow na dpi rownym 96 
-             * wtedy dobrze beda odwzorowane wielkosci!!!
+             * wtedy dobrze bedą odwzorowane wielkości!!!
              */
             bgImages = new Image[5];
             bgImages[0]= Image.FromFile("images/bg_1024.jpg");

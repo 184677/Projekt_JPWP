@@ -12,32 +12,97 @@ using System.Threading;
 
 namespace LabiryntWiedzy
 {
+    /// <summary>
+    /// Główny obszar graficzny gry
+    /// Klasa dziedzicząca po klasie Panel
+    /// </summary>
     public class GamePanel : Panel
     {
-        public int sWidth; //Szerokość pola graficznego gry
-        public int sHeight; //Wysokość pola graficznego gry
-        public int barHeight; //Wysokość paska menu
-        public GameStatus gStatus; // zmienna reprezentujaca stan gry  0-stan poczatkowy, rysowanie menu
-        public FontFamily fontFamily; //Rodzina używanych czcionek
-        public Font menuFont; //Czcionka stosowana w pasku Menu
-        public Font menuFontv2; //Czcionka stosowana w pasku Menu - wersja zmniejszona
-        public Font questionFont; //Czcionka stosowane do wypisania pytan
-        public static Block[] blocks; // tablica obiektów pierwszego planu - klocki
-        public static Rectangle startMenuRec; // // prostokat reprezentujacy startowe menu
-        public static Rectangle labirynthRec; // prostokat reprezentujacy labirynt
-        public static Rectangle questionRec; // prostokat zawierajacy pytanie
-        public static Rectangle barMenuRec; // prostokat reprezentujacy pasek menu
-        public static Rectangle shortMenuRec; // prostokat reprezentujacy skrocony pasek menu
-        public static Rectangle exit1Rec; // prostokat reprezentujacy wyjscie nr1
-        public static Rectangle exit2Rec; // prostokat reprezentujacy wyjscie nr2
-        public static Label questionLabel; // kontrolka label do wyswietlania pytania
+        /// <summary>
+        /// Szerokość pola graficznego gry
+        /// </summary>
+        public int sWidth;
+        /// <summary>
+        /// Wysokość pola graficznego gry
+        /// </summary>
+        public int sHeight;
+        /// <summary>
+        /// Wysokość paska menu
+        /// </summary>
+        public int barHeight;
+        /// <summary>
+        /// Obiekt reprezentujący status gry
+        /// </summary>
+        public GameStatus gStatus;
+        /// <summary>
+        /// Rodzina stosowanych czcionek
+        /// </summary>
+        public FontFamily fontFamily;
+        /// <summary>
+        /// Czcionka stosowana w pasku Menu
+        /// </summary>
+        public Font menuFont;
+        /// <summary>
+        /// Czcionka stosowana w pasku Menu - wersja zmniejszona
+        /// </summary>
+        public Font menuFontv2;
+        /// <summary>
+        /// Czcionka stosowane do wypisania pytan
+        /// </summary>
+        public Font questionFont;
+        /// <summary>
+        /// Tablica obiektów pierwszego planu - klocki
+        /// </summary>
+        public static Block[] blocks;
+        /// <summary>
+        /// Prostokąt reprezentujący startowe menu
+        /// </summary>
+        public static Rectangle startMenuRec;
+        /// <summary>
+        /// Prostokąt reprezentujący labirynt
+        /// </summary>
+        public static Rectangle labirynthRec;
+        /// <summary>
+        /// Prostokąt reprezentujący panel z pytaniem
+        /// </summary>
+        public static Rectangle questionRec;
+        /// <summary>
+        /// Prostokąt reprezentujący pasek menu
+        /// </summary>
+        public static Rectangle barMenuRec;
+        /// <summary>
+        /// Prostokąt reprezentujący skrócony pasek menu
+        /// </summary>
+        public static Rectangle shortMenuRec;
+        /// <summary>
+        /// Prostokąt reprezentujący wyjście nr 1
+        /// </summary>
+        public static Rectangle exit1Rec;
+        /// <summary>
+        /// Prostokąt reprezentujący wyjście nr 2
+        /// </summary>
+        public static Rectangle exit2Rec;
+        /// <summary>
+        /// Obiekt do wyświetlania pytania
+        /// </summary>
+        public static Label questionLabel;
+        /// <summary>
+        /// Punkt do wyliczenia zmian w położeniu myszki 
+        /// </summary>
         private Point MouseDownLocation;
 
+
+        /// <summary>
+        /// Konstruktor klasy pola graficznego gry. 
+        /// Ustawienia początkowe oraz ładowanie zasobów
+        /// </summary>
+        /// <param name="width">Szerokość pola graficznego gry</param>
+        /// <param name="height">Wysokość pola graficznego gry</param>
         public GamePanel(int width, int height)
         {
             gStatus = new GameStatus();
-            gStatus.reset();
-            gStatus.deleteResults();
+            gStatus.reset(); 
+            gStatus.deleteResults(); // usunięcie zapisanego pliku z wynikami
 
             DoubleBuffered = true; // zapobieganie efektu typu blinking
             this.sWidth = width;
@@ -69,8 +134,8 @@ namespace LabiryntWiedzy
             this.Controls.Add(questionLabel);
 
             SoundPlayer sp = new SoundPlayer();
-            //sp.SoundLocation = "music/bg_music.wav";
-            //sp.PlayLooping();
+            sp.SoundLocation = "music/bg_music.wav";
+            sp.PlayLooping();
 
             GPars.stopwatch = new Stopwatch();
 
@@ -80,58 +145,62 @@ namespace LabiryntWiedzy
         } // koniec GamePanel()
 
 
-
+        /// <summary>
+        /// Metoda odpowiedzielna za odrysowanie panelu, 
+        /// wypełnienie w zależności od stanu gry i wybrania odpowiedniej pozycji w menu
+        /// </summary>
+        /// <param name="e">Argument obsługi zdarzenia rysowania</param>
         protected override void OnPaint( PaintEventArgs e)
         {
-            Pen Whitepen = new Pen(Brushes.White);
+            Pen Whitepen = new Pen(Brushes.White); // Obiekt do rysowania obwódki w prostokątach z zaokrąglonymi rogami
             Whitepen.Width = 4.0F;
-            Pen Redpen = new Pen(Brushes.Red);
+            Pen Redpen = new Pen(Brushes.Red); // Obiekt do rysowania linii wyjścia z labiryntu 
             Redpen.Width = 4.0F;
 
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.SmoothingMode = SmoothingMode.AntiAlias; // Ustawienie trybu lepszej jakości grafiki
 
-            if (gStatus.level==1) g.DrawImage(GPars.bgImages[0], new Point(0, 0));
-            else if (gStatus.level == 2 ) g.DrawImage(GPars.bgImages[1], new Point(0, 0));
-            else if (gStatus.level == 3) g.DrawImage(GPars.bgImages[2], new Point(0, 0));
-            else if (gStatus.level == 4) g.DrawImage(GPars.bgImages[3], new Point(0, 0));
-            else g.DrawImage(GPars.bgImages[4], new Point(0, 0));
+            if (gStatus.level==1) g.DrawImage(GPars.bgImages[0], new Point(0, 0)); // Rysowanie 1 tła dla 1 lvl
+            else if (gStatus.level == 2 ) g.DrawImage(GPars.bgImages[1], new Point(0, 0)); // Rysowanie 2 tła dla 2 lvl
+            else if (gStatus.level == 3) g.DrawImage(GPars.bgImages[2], new Point(0, 0)); // Rysowanie 3 tła dla 3 lvl
+            else if (gStatus.level == 4) g.DrawImage(GPars.bgImages[3], new Point(0, 0)); // Rysowanie 4 tła dla 4 lvl
+            else g.DrawImage(GPars.bgImages[4], new Point(0, 0)); // Rysowanie 5 tła dla 5 lvl
 
-            g.DrawImage(GPars.logoImage, 860, 680);// narysowanie loga
+            g.DrawImage(GPars.logoImage, 860, 680); // Narysowanie loga
 
-            if (GPars.pause)
+            if (GPars.pause) // Przerwa w grze
             {
-                questionLabel.Visible = false;
+                questionLabel.Visible = false; // Wyłączenie wyświetlania pytania
 
-                if (GPars.gMenu)
+                if (GPars.gMenu) // Wybrano menu
                 {
-                    GraphicsPath startMenu = Block.RoundedRect(startMenuRec, 10); // Menu poczatkowe z zaokraglonymi rogami
-                    g.DrawPath(Whitepen, startMenu); // narysowanie obwodki
-                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), startMenu); // wypelnienie
+                    GraphicsPath startMenu = Block.RoundedRect(startMenuRec, 10); // Prostokąt startowego menu z zaokrąglonymi rogami
+                    g.DrawPath(Whitepen, startMenu); // Narysowanie obwódki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), startMenu); // Wypełnienie
                     g.DrawString("Wybierz poziom", menuFont, Brushes.White, new Point(375, 305));
                     g.DrawString("O grze...", menuFont, Brushes.White, new Point(440, 390));
                     g.DrawString("Wyjdź z gry", menuFont, Brushes.White, new Point(400, 475));
                     questionLabel.Visible = false;
 
-                    if (GPars.gStarted && !GPars.end) g.DrawString("Kontynuuj grę", menuFont, Brushes.White, new Point(390, 225));
+                    if (GPars.gStarted && !GPars.end) g.DrawString("Kontynuuj grę", menuFont, Brushes.White, new Point(390, 225)); // Jeśli zaczęto rozgrywke
                     else g.DrawString("Nowa gra", menuFont, Brushes.White, new Point(420, 225));
                 }
 
-                else if (GPars.gLevelSel)
+                else if (GPars.gLevelSel) // Wybrano pozycje w menu "Wybierz poziom"
                 {
-                    GraphicsPath shortMenu = Block.RoundedRect(shortMenuRec, 10); // prostokat menu z zaokraglonymi rogami
-                    g.DrawPath(Whitepen, shortMenu); // narysowanie obwodki
-                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), shortMenu); // wypelnienie
+                    GraphicsPath shortMenu = Block.RoundedRect(shortMenuRec, 10); // Prostokąt menu z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, shortMenu); // Narysowanie obwódki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), shortMenu); // Wypełnienie
 
-                    Rectangle lvlMenuRec1 = new Rectangle(250, 121, 525, 75);
-                    GraphicsPath lvlMenu1 = Block.RoundedRect(lvlMenuRec1, 10); // prostokat z zaokraglonymi rogami
-                    g.DrawPath(Whitepen, lvlMenu1); // narysowanie obwodki
-                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), lvlMenu1); // wypelnienie
+                    Rectangle lvlMenuRec1 = new Rectangle(250, 121, 525, 75); // Prostokąt na którym wyświetlany jest napis "Wybierz poziom"
+                    GraphicsPath lvlMenu1 = Block.RoundedRect(lvlMenuRec1, 10); // Prostokąt z zaokrąglonymi rogami
+                    g.DrawPath(Whitepen, lvlMenu1); // Narysowanie obwódki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), lvlMenu1); // Wypełnienie
 
-                    Rectangle lvlMenuRec2 = new Rectangle(250, 271 - 35, 525, 295);
-                    GraphicsPath lvlMenu2 = Block.RoundedRect(lvlMenuRec2, 10); // prostokat z zaokraglonymi rogami
-                    g.DrawPath(Whitepen, lvlMenu2); // narysowanie obwodki
-                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), lvlMenu2); // wypelnienie
+                    Rectangle lvlMenuRec2 = new Rectangle(250, 271 - 35, 525, 295); // Prostakąt na którym wyświetlane są przyciski do wyboru konkretnego poziomu
+                    GraphicsPath lvlMenu2 = Block.RoundedRect(lvlMenuRec2, 10); // Prostokąt z zaokrąglonymi rogami
+                    g.DrawPath(Whitepen, lvlMenu2); // Narysowanie obwódki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), lvlMenu2); // Wypłnienie
 
                     g.DrawString("Wybierz poziom:", menuFont, Brushes.White, new Point(250+120, 128));
 
@@ -141,63 +210,62 @@ namespace LabiryntWiedzy
                     g.DrawImage(GPars.lvlImages[3], 325+75, 271+150);
                     g.DrawImage(GPars.lvlImages[4], 325+225, 271+150);
 
-                    g.DrawImage(GPars.logoImage, 860, 680);// narysowanie loga
-                    g.DrawImage(GPars.menuImage, new Point(820, 20)); // narysowanie ikony menu
+                    g.DrawImage(GPars.logoImage, 860, 680);// Narysowanie loga
+                    g.DrawImage(GPars.menuImage, new Point(820, 20)); // Narysowanie ikony menu
                 }
-                else if (GPars.gInformation)
+                else if (GPars.gInformation) // Wybrano pozycje w menu "O grze...."
                 {
-                    GraphicsPath shortMenu = Block.RoundedRect(shortMenuRec, 10); // prostokat menu z zaokraglonymi rogami
-                    g.DrawPath(Whitepen, shortMenu); // narysowanie obwodki
-                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), shortMenu); // wypelnienie
+                    GraphicsPath shortMenu = Block.RoundedRect(shortMenuRec, 10); // Prostokąt menu z zaokraglonymi rogami
+                    g.DrawPath(Whitepen, shortMenu); // Narysowanie obwódki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), shortMenu); // Wypełnienie
 
-                    g.DrawImage(GPars.howToPlayImage, 0, 0);
+                    g.DrawImage(GPars.howToPlayImage, 0, 0); // Narysowanie grafiki z intrukcjami do gry
 
-                    g.DrawImage(GPars.logoImage, 860, 680);// narysowanie loga
-                    g.DrawImage(GPars.menuImage, new Point(820, 20)); // narysowanie ikony menu
+                    g.DrawImage(GPars.logoImage, 860, 680);// Narysowanie loga
+                    g.DrawImage(GPars.menuImage, new Point(820, 20)); // Narysowanie ikony menu
                 }
             }
-            else
+            else // Rozpoczęto grę
             {
-                GraphicsPath barMenu = Block.RoundedRect(barMenuRec, 10); // pasek menu z zaokraglonymi rogami
-                g.DrawPath(Whitepen, barMenu); // narysowanie obwodki
-                g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), barMenu); // wypelnienie
+                GraphicsPath barMenu = Block.RoundedRect(barMenuRec, 10); // Pasek menu z zaokrąglonymi rogami
+                g.DrawPath(Whitepen, barMenu); // Narysowanie obwódki
+                g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), barMenu); // Wypełnienie
 
-                g.DrawImage(GPars.menuImage, new Point(820, 20)); // narysowanie ikony menu
+                g.DrawImage(GPars.menuImage, new Point(820, 20)); // Narysowanie ikony menu
 
-              
                 g.DrawString("POZIOM :", menuFont, Brushes.White, new Point(40, 23));
-                g.DrawString("" + gStatus.level, menuFont, Brushes.White, new Point(185, 23)); // wypisanie numeru aktualnego poziomu
+                g.DrawString("" + gStatus.level, menuFont, Brushes.White, new Point(185, 23)); // Wypisanie numeru aktualnego poziomu
                 g.DrawString("PUNKTY :", menuFont, Brushes.White, new Point(300, 23));
-                g.DrawString("" + gStatus.points, menuFont, Brushes.White, new Point(452, 23)); // wypisanie numeru aktualnego poziomu
+                g.DrawString("" + gStatus.points, menuFont, Brushes.White, new Point(452, 23)); // Wypisanie liczby zdobytych punktów
 
-                GraphicsPath labirynth = Block.RoundedRect(labirynthRec, 3); // labirynt z zaokraglonymi rogami
-                g.DrawPath(Whitepen, labirynth); // narysowanie obwodki labiryntu
-                g.FillPath(new SolidBrush(Color.FromArgb(100, 0, 0, 0)), labirynth); // wypelnienie labiryntu
+                GraphicsPath labirynth = Block.RoundedRect(labirynthRec, 3); // Prostokąt labiryntu z zaokrąglonymi rogami
+                g.DrawPath(Whitepen, labirynth); // Narysowanie obwódki labiryntu
+                g.FillPath(new SolidBrush(Color.FromArgb(100, 0, 0, 0)), labirynth); // Wypelnienie prostokąta labiryntu
 
-                GraphicsPath question = Block.RoundedRect(questionRec, 10); // prostokat zawierajacy pytanie z zaokraglonymi rogami
-                g.DrawPath(Whitepen, question); // narysowanie obwodki 
-                g.FillPath(new SolidBrush(Color.FromArgb(100, 0, 0, 0)), question); // wypelnienie 
+                GraphicsPath question = Block.RoundedRect(questionRec, 10); // Prostokat z zaokrąglonymi rogami zawierający pytanie 
+                g.DrawPath(Whitepen, question); // Narysowanie obwódki 
+                g.FillPath(new SolidBrush(Color.FromArgb(100, 0, 0, 0)), question); // Wypełnienie 
 
-                questionLabel.Visible = true;
+                questionLabel.Visible = true; // Włączenie wyświetlania pytania
 
-                g.DrawImage(GPars.ans1Image, exit1Rec.Left, exit1Rec.Top); // narysowanie wyjscia nr1
-                g.DrawImage(GPars.ans2Image, exit2Rec.Left, exit2Rec.Top); // narysowanie wyjscia nr2
+                g.DrawImage(GPars.ans1Image, exit1Rec.Left, exit1Rec.Top); // Narysowanie wyjścia nr 1
+                g.DrawImage(GPars.ans2Image, exit2Rec.Left, exit2Rec.Top); // Narysowanie wyjścia nr 2
 
-                g.DrawLine(Redpen, new Point(labirynthRec.Right, labirynthRec.Top + 75), new Point(labirynthRec.Right, labirynthRec.Top + 170)); //linia wyjscia nr1
-                g.DrawLine(Redpen, new Point(labirynthRec.Left, labirynthRec.Bottom - 170), new Point(labirynthRec.Left, labirynthRec.Bottom - 75)); // linia wyjscia nr2
+                g.DrawLine(Redpen, new Point(labirynthRec.Right, labirynthRec.Top + 75), new Point(labirynthRec.Right, labirynthRec.Top + 170)); // Linia wyjścia nr 1
+                g.DrawLine(Redpen, new Point(labirynthRec.Left, labirynthRec.Bottom - 170), new Point(labirynthRec.Left, labirynthRec.Bottom - 75)); // Linia wyjścia nr 2
 
-                for (int i = 0; i < GPars.noOfObjects; i++) g.DrawImage(blocks[i].icon, blocks[i].rec.Left, blocks[i].rec.Top); // rysowanie klockow
+                for (int i = 0; i < GPars.noOfObjects; i++) g.DrawImage(blocks[i].icon, blocks[i].rec.Left, blocks[i].rec.Top); // Rysowanie klocków
 
-                if(GPars.lvlEnd)
+                if(GPars.lvlEnd) // Zakończono poziom
                 {
-                    GraphicsPath nextLvlPanel = Block.RoundedRect(new Rectangle(questionRec.Left, questionRec.Bottom + 50, questionRec.Width, labirynthRec.Bottom-questionRec.Bottom - 50), 10); // pasek menu z zaokraglonymi rogami
-                    g.DrawPath(Whitepen, nextLvlPanel); // narysowanie obwodki
-                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), nextLvlPanel); // wypelnienie
+                    GraphicsPath nextLvlPanel = Block.RoundedRect(new Rectangle(questionRec.Left, questionRec.Bottom + 50, questionRec.Width, labirynthRec.Bottom-questionRec.Bottom - 50), 10); // Prostokąt z zaokrąglonymi rogami do wyświetlania czy wybrano poprawne wyjście
+                    g.DrawPath(Whitepen, nextLvlPanel); // Narysowanie obwódki
+                    g.FillPath(new SolidBrush(Color.FromArgb(130, 0, 0, 0)), nextLvlPanel); // Wypełnienie
 
                     if (GPars.rightAns) g.DrawString("Dobra odpowiedź!", menuFontv2, Brushes.Lime, new Point(questionRec.Left + 30 , questionRec.Bottom + 70));
                     else g.DrawString("Zła odpowiedź!", menuFontv2, Brushes.Red, new Point(questionRec.Left + 45 , questionRec.Bottom + 70));
 
-                    if (GPars.end) g.DrawString("Koniec Gry", menuFontv2, Brushes.White, new Point(questionRec.Left + 75, questionRec.Bottom + 135));
+                    if (GPars.end) g.DrawString("Koniec Gry", menuFontv2, Brushes.White, new Point(questionRec.Left + 75, questionRec.Bottom + 135)); // Jeśli skończono grę
                     else g.DrawString("Następny poziom", menuFontv2, Brushes.White, new Point(questionRec.Left + 35, questionRec.Bottom + 135));
 
                 }
@@ -205,18 +273,23 @@ namespace LabiryntWiedzy
             }
             Whitepen.Dispose();
             Redpen.Dispose();
-        }
+        } // koniec OnPaint()
 
+
+        /// <summary>
+        /// Metoda odpowiedzialna za obsługę zdarzeń - wciśnięcie przycisku myszki,
+        /// umożliwia wybranie odpowiedniej pozycji menu, przejście do kolejnego poziomu i śledzi zmianę położenia myszki
+        /// </summary>
+        /// <param name="e">Argument obsługi zdarzenia przyciśnięcia przycisku myszki</param>
         protected override void OnMouseDown( MouseEventArgs e)
         {
             MouseDownLocation = e.Location;
 
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left) // Wciśnięto lewy przycisk myszy
             {
-                if (GPars.pause && GPars.gMenu)
+                if (GPars.pause && GPars.gMenu) // Plansza z menu startowym
                 {
-                    //Czy wybrano opcję nowa gra w startowym menu
-                    if (e.X > 395 && e.X < 630 && e.Y > 225 && e.Y < 285)
+                    if (e.X > 395 && e.X < 630 && e.Y > 225 && e.Y < 285) // Wybranie opcji "Nowa gra" w startowym menu
                     {
                         GPars.stopwatch.Start();
                         if (GPars.end)
@@ -229,58 +302,55 @@ namespace LabiryntWiedzy
                         GPars.gMenu = false;
                         Invalidate();
                     }
-                    //Czy wybrano opcję wybor poziomu w startowym menu
-                    if (e.X > 375 && e.X < 650 && e.Y > 310 && e.Y < 365)
+                    if (e.X > 375 && e.X < 650 && e.Y > 310 && e.Y < 365) // Wybranie opcji "Wybór poziomu" w startowym menu
                     {
                         GPars.gMenu = false;
                         GPars.gLevelSel = true;
                         Invalidate();
                     }
-                    //Czy wybrano opcję o grze... w startowym menu
-                    if (e.X > 440 && e.X < 590 && e.Y > 395 && e.Y < 450)
+                    if (e.X > 440 && e.X < 590 && e.Y > 395 && e.Y < 450) // Wybranie opcji "O grze..." w startowym menu
                     {
                         GPars.gMenu = false;
                         GPars.gInformation = true;
                         Invalidate();
                     }
-                    //Czy wybrano wyjdz z gry w startowym menu
-                    if (e.X > 400 && e.X < 615 && e.Y < 535 && e.Y > 480)
+                    if (e.X > 400 && e.X < 615 && e.Y < 535 && e.Y > 480) // Wybranie opcji "Wyjdź z gry" w startowym menu
                     {
                         gStatus.saveResults();
                         Application.Exit();
                     }
                 }
 
-                else if(GPars.pause && !GPars.gMenu && GPars.gLevelSel) // wybrana pozycja "wybor poziomu"
+                else if(GPars.pause && !GPars.gMenu && GPars.gLevelSel) // Plansza z wybórem poziomu
                 {
-                    Boolean flagSelected = false; // flaga sprawdzajaca czy wybrano poziom
-                    if (e.X > 325 && e.X < (325+75) && e.Y < (271 + 75) && e.Y > 271) // wybrany poziom 1
+                    Boolean flagSelected = false; // Flaga sprawdzająca czy wybrano poziom
+                    if (e.X > 325 && e.X < (325+75) && e.Y < (271 + 75) && e.Y > 271) // Wybrany poziom 1
                     {
                         flagSelected = true;
                         gStatus.level = 1;
                     }
-                    else if (e.X > (325 + 150) && e.X < (325 + 225) && e.Y < (271 + 75) && e.Y > 271) // wybrany poziom 2
+                    else if (e.X > (325 + 150) && e.X < (325 + 225) && e.Y < (271 + 75) && e.Y > 271) // Wybrany poziom 2
                     {
                         flagSelected = true;
                         gStatus.level = 2;
                     } 
-                    else if (e.X > (325 + 300) && e.X < (325 + 375) && e.Y < (271 + 75) && e.Y > 271) // wybrany poziom 3
+                    else if (e.X > (325 + 300) && e.X < (325 + 375) && e.Y < (271 + 75) && e.Y > 271) // Wybrany poziom 3
                     {
                         flagSelected = true;
                         gStatus.level = 3;
                     }
-                    else if (e.X > (325 + 75) && e.X < (325 + 150) && e.Y < (271 + 225) && e.Y > (271 + 150)) // wybrany poziom 4
+                    else if (e.X > (325 + 75) && e.X < (325 + 150) && e.Y < (271 + 225) && e.Y > (271 + 150)) // Wybrany poziom 4
                     {
                         flagSelected = true;
                         gStatus.level = 4;
                     }
-                    else if (e.X > (325 + 225) && e.X < (325 + 300) && e.Y < (271 + 225) && e.Y > (271 + 150)) // wybrany poziom 5
+                    else if (e.X > (325 + 225) && e.X < (325 + 300) && e.Y < (271 + 225) && e.Y > (271 + 150)) // Wybrany poziom 5
                     {
                         flagSelected = true;
                         gStatus.level = 5;
                     }
 
-                    if (flagSelected)
+                    if (flagSelected) // Wybrano poziom
                     {
                         gStatus.resetPoints();
                         GPars.pause = false;
@@ -295,7 +365,7 @@ namespace LabiryntWiedzy
                     }
                 }
 
-                if (!GPars.pause && !GPars.gMenu && GPars.lvlEnd )
+                if (!GPars.pause && !GPars.gMenu && GPars.lvlEnd ) // Wciśnięcie przycisku "Następny poziom"
                 {
                     if (e.X > 700 && e.X < 935 && e.Y < 595 && e.Y > 555)
                     {
@@ -311,7 +381,7 @@ namespace LabiryntWiedzy
                     }
                 }
 
-                if (!GPars.gMenu || !GPars.pause)
+                if (!GPars.gMenu || !GPars.pause) // Wyjście do startowego menu
                 {
                     if (e.X > 820 && e.X < 975 && e.Y > 30 && e.Y < 80)
                     {
@@ -326,7 +396,10 @@ namespace LabiryntWiedzy
             }
         } // koniec OnMouseDown
 
-
+        /// <summary>
+        /// Metoda odpowiedzialna za poruszanie klockami
+        /// </summary>
+        /// <param name="e">Argument obsługi zdarzenia przesunięcia myszki</param>
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (!GPars.pause && !GPars.end && !GPars.lvlEnd)
@@ -375,31 +448,37 @@ namespace LabiryntWiedzy
         }// koniec OnMouseMove
 
 
-
+        /// <summary>
+        /// Sprawdzenie czy czerwony klocek dotarł do jednego z 2 wyjść
+        /// </summary>
         private void ExitCheck()
         {
-            if (blocks[0].rec.IntersectsWith(exit1Rec) || blocks[0].rec.IntersectsWith(exit2Rec))
+            if (blocks[0].rec.IntersectsWith(exit1Rec) || blocks[0].rec.IntersectsWith(exit2Rec)) // Kolizja z jednym z 2 wyjść
             {
-                GPars.stopwatch.Stop();
-                gStatus.saveLevelPassTime();
+                GPars.stopwatch.Stop(); // Zatrzymanie odmierzania czasu
+                gStatus.saveLevelPassTime(); // Zapisanie czasu przejścia poziomu
                 GPars.lvlEnd = true;
-                if (GPars.questionAns == 1 && blocks[0].rec.IntersectsWith(exit1Rec) )
+                if (GPars.questionAns == 1 && blocks[0].rec.IntersectsWith(exit1Rec) ) // Kolzija z 1 wyjściem
                 {
                     GPars.rightAns = true;
                     gStatus.points += 1;
                 }
-                else if (GPars.questionAns == 2 && blocks[0].rec.IntersectsWith(exit2Rec) )
+                else if (GPars.questionAns == 2 && blocks[0].rec.IntersectsWith(exit2Rec) ) // Kolizja z 2 wyjściem
                 {
                     GPars.rightAns = true;
                     gStatus.points += 1;
                 }
                 else GPars.rightAns = false;
 
-                if(gStatus.level==GPars.noOfLevels) GPars.end = true;
+                if(gStatus.level==GPars.noOfLevels) GPars.end = true; // Jeśli brak kolejnych poziomów - koniec gry
             }
 
         } //koniec ExitCheck
 
+
+        /// <summary>
+        /// Restart gry - ustawienie parametrów oraz obiektów pierwszego planu
+        /// </summary>
         private void restartGame() 
         {
             gStatus.reset();
@@ -427,6 +506,9 @@ namespace LabiryntWiedzy
             initLevel();
         }//koniec restartGame()
 
+        /// <summary>
+        /// Inicjalizajca poziomu - ustawienie położenia klocków w labiryncie i zmiana wyświetlanego pytania w zależności on numeru poziomu
+        /// </summary>
         private void initLevel() //funkcja do ustawiania polozenia klockow na planszy
         {
 
