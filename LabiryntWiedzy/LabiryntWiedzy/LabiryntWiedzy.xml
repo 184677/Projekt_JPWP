@@ -75,8 +75,8 @@
         </member>
         <member name="T:LabiryntWiedzy.GamePanel">
             <summary>
-            Główny obszar graficzny gry
-            Klasa dziedzicząca po klasie Panel
+            Główny obszar graficzny gry,
+            klasa dziedzicząca po klasie Panel
             </summary>
         </member>
         <member name="F:LabiryntWiedzy.GamePanel.sWidth">
@@ -171,8 +171,8 @@
         </member>
         <member name="M:LabiryntWiedzy.GamePanel.#ctor(System.Int32,System.Int32)">
             <summary>
-            Konstruktor klasy pola graficznego gry. 
-            Ustawienia początkowe oraz ładowanie zasobów
+            Konstruktor klasy pola graficznego gry, 
+            ustawienia początkowe oraz ładowanie zasobów
             </summary>
             <param name="width">Szerokość pola graficznego gry</param>
             <param name="height">Wysokość pola graficznego gry</param>
@@ -186,14 +186,14 @@
         </member>
         <member name="M:LabiryntWiedzy.GamePanel.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
             <summary>
-            Metoda odpowiedzialna za obsługę zdarzeń - wciśnięcie przycisku myszki,
+            Metoda odpowiedzialna za obsługę zdarzeń - wciśnięcie przycisku myszki
             umożliwia wybranie odpowiedniej pozycji menu, przejście do kolejnego poziomu i śledzi zmianę położenia myszki
             </summary>
             <param name="e">Argument obsługi zdarzenia przyciśnięcia przycisku myszki</param>
         </member>
         <member name="M:LabiryntWiedzy.GamePanel.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
             <summary>
-            Metoda odpowiedzialna za poruszanie klockami
+            Metoda odpowiedzialna za poruszanie klockami za pomocą przesuwania myszki
             </summary>
             <param name="e">Argument obsługi zdarzenia przesunięcia myszki</param>
         </member>
@@ -283,8 +283,8 @@
         </member>
         <member name="T:LabiryntWiedzy.GPars">
             <summary>
-            Klasa - kontener parametrów
-            Odczytuje zasoby graficzne
+            Klasa - kontener parametrów,
+            odczytuje zasoby graficzne
             </summary>
         </member>
         <member name="F:LabiryntWiedzy.GPars.bgImages">
@@ -389,13 +389,13 @@
         </member>
         <member name="M:LabiryntWiedzy.GPars.loadInitialImages">
             <summary>
-            Metoda ładowania początkowych zasobów gry
+            Metoda do załadowania początkowych zasobów gry
             </summary>
         </member>
         <member name="T:LabiryntWiedzy.Program">
             <summary>
-            Gra - Labirynt Wiedzy
-            Autor - Oskar Bogucki 184677
+            Gra - Labirynt Wiedzy,
+            autor - Oskar Bogucki 184677
             </summary>
         </member>
         <member name="M:LabiryntWiedzy.Program.Main(System.String[])">

@@ -4,10 +4,10 @@ using System.Windows.Forms;
 namespace LabiryntWiedzy
 {
     /// <summary>
-    /// Gra - Labirynt Wiedzy
-    /// Autor - Oskar Bogucki 184677
+    /// Gra - Labirynt Wiedzy,
+    /// autor - Oskar Bogucki 184677
     /// </summary>
-    class Program
+    public class Program
     {
         /// <summary>
         /// Metoda uruchamia grę

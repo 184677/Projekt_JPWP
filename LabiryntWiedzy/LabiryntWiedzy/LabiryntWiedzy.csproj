@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	  <UseWindowsForms>true</UseWindowsForms>
 	  <ApplicationIcon />
 	  <StartupObject />
+	  <Authors>Oskar Bogucki 184677</Authors>
+	  <Company>Oskar Bogucki 184677</Company>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

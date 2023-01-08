@@ -8,8 +8,8 @@ using System.Diagnostics;
 namespace LabiryntWiedzy
 {
     /// <summary>
-    /// Klasa - kontener parametrów
-    /// Odczytuje zasoby graficzne
+    /// Klasa - kontener parametrów,
+    /// odczytuje zasoby graficzne
     /// </summary>
     public class GPars
     {
@@ -95,7 +95,7 @@ namespace LabiryntWiedzy
         public static Stopwatch stopwatch;
 
         /// <summary>
-        /// Metoda ładowania początkowych zasobów gry
+        /// Metoda do załadowania początkowych zasobów gry
         /// </summary>
         public static void loadInitialImages()
         {
@@ -133,7 +133,6 @@ namespace LabiryntWiedzy
             lvlImages[3] = Image.FromFile("images/lvl_4.png");
             lvlImages[4] = Image.FromFile("images/lvl_5.png");
         }//koniec loadInitialImages()
-
 
     }//koniec class GameParameters
 }

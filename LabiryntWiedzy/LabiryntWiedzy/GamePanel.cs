@@ -13,8 +13,8 @@ using System.Threading;
 namespace LabiryntWiedzy
 {
     /// <summary>
-    /// Główny obszar graficzny gry
-    /// Klasa dziedzicząca po klasie Panel
+    /// Główny obszar graficzny gry,
+    /// klasa dziedzicząca po klasie Panel
     /// </summary>
     public class GamePanel : Panel
     {
@@ -93,8 +93,8 @@ namespace LabiryntWiedzy
 
 
         /// <summary>
-        /// Konstruktor klasy pola graficznego gry. 
-        /// Ustawienia początkowe oraz ładowanie zasobów
+        /// Konstruktor klasy pola graficznego gry, 
+        /// ustawienia początkowe oraz ładowanie zasobów
         /// </summary>
         /// <param name="width">Szerokość pola graficznego gry</param>
         /// <param name="height">Wysokość pola graficznego gry</param>
@@ -277,7 +277,7 @@ namespace LabiryntWiedzy
 
 
         /// <summary>
-        /// Metoda odpowiedzialna za obsługę zdarzeń - wciśnięcie przycisku myszki,
+        /// Metoda odpowiedzialna za obsługę zdarzeń - wciśnięcie przycisku myszki
         /// umożliwia wybranie odpowiedniej pozycji menu, przejście do kolejnego poziomu i śledzi zmianę położenia myszki
         /// </summary>
         /// <param name="e">Argument obsługi zdarzenia przyciśnięcia przycisku myszki</param>
@@ -397,7 +397,7 @@ namespace LabiryntWiedzy
         } // koniec OnMouseDown
 
         /// <summary>
-        /// Metoda odpowiedzialna za poruszanie klockami
+        /// Metoda odpowiedzialna za poruszanie klockami za pomocą przesuwania myszki
         /// </summary>
         /// <param name="e">Argument obsługi zdarzenia przesunięcia myszki</param>
         protected override void OnMouseMove(MouseEventArgs e)
